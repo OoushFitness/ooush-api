@@ -1,0 +1,8 @@
+rootProject.name = 'api'
+
+// Ooush Java Projects
+
+include ':ooush-entity'
+include 'ooush-repository'
+include 'ooush-service'
+
