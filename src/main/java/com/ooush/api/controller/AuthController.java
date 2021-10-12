@@ -1,12 +1,13 @@
 package com.ooush.api.controller;
 
+import com.ooush.api.dto.request.LoginRequest;
 import com.ooush.api.dto.response.OoushResponseEntity;
 import com.ooush.api.dto.response.OoushResponseMap;
 import com.ooush.api.service.authentication.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,11 +21,11 @@ public class AuthController {
 	@Autowired
 	private AuthenticationService authenticationService;
 
-	@RequestMapping(value = "/login/{userName}/{password}", method = RequestMethod.GET)
-	public OoushResponseEntity authenticateLogin(@PathVariable String userName, @PathVariable String password) {
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public OoushResponseEntity authenticateLogin(@RequestBody LoginRequest loginRequest) {
 		LOGGER.info("Resource /auth/authenticateLogin/ GET called");
-		LOGGER.debug("Resource /auth/authenticateLogin/{}/{} GET called", userName, password);
-		return new OoushResponseEntity(OoushResponseMap.createResponseMap(authenticationService.authenticateLogin(userName, password)).construct());
+		LOGGER.debug("Resource /auth/authenticateLogin/ POST called for userName: {}", loginRequest.getUserName());
+		return new OoushResponseEntity(OoushResponseMap.createResponseMap(authenticationService.authenticateLogin(loginRequest)).construct());
 	}
 
 }

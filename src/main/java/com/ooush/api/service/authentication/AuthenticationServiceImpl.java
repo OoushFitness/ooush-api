@@ -2,6 +2,7 @@ package com.ooush.api.service.authentication;
 
 import com.ooush.api.constants.OoushConstants;
 import com.ooush.api.controller.AuthController;
+import com.ooush.api.dto.request.LoginRequest;
 import com.ooush.api.dto.response.login.LoginResponse;
 import com.ooush.api.entity.LoginToken;
 import com.ooush.api.entity.Users;
@@ -33,17 +34,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private LoginTokenRepository loginTokenRepository;
 
 	@Override
-	public LoginResponse authenticateLogin(String userName, String password) {
+	public LoginResponse authenticateLogin(LoginRequest loginRequest) {
 
 		LoginResponse loginResponse = new LoginResponse();
-		Users userToAuthenticate = userRespository.findByUserName(userName);
+		Users userToAuthenticate = userRespository.findByUserName(loginRequest.getUserName());
 
 		if (userToAuthenticate == null) {
 			LOGGER.info("Login Failed: Username not found");
 			loginResponse.setSuccess(OoushConstants.LOGIN_FAILURE);
 			loginResponse.setLoginMessage(OoushConstants.LOGIN_MESSAGE_FAILURE_USERNAME_NOT_FOUND);
 		} else {
-			processAuthentication(loginResponse, userToAuthenticate, password);
+			processAuthentication(loginResponse, userToAuthenticate, loginRequest.getPassword());
 		}
 
 		return loginResponse;

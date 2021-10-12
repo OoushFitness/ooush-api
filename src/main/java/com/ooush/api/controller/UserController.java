@@ -22,13 +22,6 @@ public class UserController {
 	@Autowired
 	private BasicUserService basicUserService;
 
-	@RequestMapping(value = "/getUser/{id}", method = RequestMethod.GET)
-	public OoushResponseEntity getUser(@PathVariable Integer id) {
-		LOGGER.info("Resource /users/getUser/ GET called");
-		LOGGER.debug("Resource /users/getUser/{} GET called", id);
-		return new OoushResponseEntity(OoushResponseMap.createResponseMap(basicUserService.findUserById(id)).construct());
-	}
-
 	@RequestMapping(value = "/registerUser", method = RequestMethod.POST)
 	public OoushResponseEntity registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
 		LOGGER.info("Resource /users/registerUser GET called");
@@ -36,14 +29,14 @@ public class UserController {
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(basicUserService.registerUser(registerUserRequest)).construct());
 	}
 
-	@RequestMapping(value = "/verifyUser/{verificationCode}", method = RequestMethod.GET)
+	@RequestMapping(value = "/verifyUser/{verificationCode}", method = RequestMethod.POST)
 	public OoushResponseEntity verifyUser(@PathVariable String verificationCode) {
 		LOGGER.info("Resource /users/verifyUser/ GET called");
 		LOGGER.debug("Resource /users/verifyUser/{} GET called", verificationCode);
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(basicUserService.verifyUser(verificationCode)).construct());
 	}
 
-	@RequestMapping(value = "/resendVerificationEmail/{verificationString}", method = RequestMethod.GET)
+	@RequestMapping(value = "/resendVerificationEmail/{verificationString}", method = RequestMethod.POST)
 	public OoushResponseEntity resendVerificationEmail(@PathVariable String verificationString) {
 		LOGGER.info("Resource /users/verifyUser/ GET called");
 		LOGGER.debug("Resource /users/resendVerificationEmail/{} GET called", verificationString);
