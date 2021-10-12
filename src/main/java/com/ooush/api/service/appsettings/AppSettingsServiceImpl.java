@@ -19,4 +19,12 @@ public class AppSettingsServiceImpl implements AppSettingsService {
 		String port = appSettingsRepository.getBySettingKey("api.port").getSettingValue();
 		return protocol + "://" + fqdn + ":" + port;
 	}
+
+	@Override
+	public String constructWebBaseUrl() {
+		String protocol = appSettingsRepository.getBySettingKey("protocol").getSettingValue();
+		String fqdn = appSettingsRepository.getBySettingKey("fqdn").getSettingValue();
+		String port = appSettingsRepository.getBySettingKey("web.port").getSettingValue();
+		return protocol + "://" + fqdn + ":" + port;
+	}
 }
