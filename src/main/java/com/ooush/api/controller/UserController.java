@@ -22,7 +22,7 @@ public class UserController {
 	@Autowired
 	private BasicUserService basicUserService;
 
-	@RequestMapping(value = "/registerUser", method = RequestMethod.POST)
+	@RequestMapping(value = "/registerUser", method = RequestMethod.POST, produces = "application/json")
 	public OoushResponseEntity registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
 		LOGGER.info("Resource /users/registerUser GET called");
 		LOGGER.debug("Resource /users/registerUser GET called");
