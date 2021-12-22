@@ -24,12 +24,12 @@ public class UserController {
 
 	@RequestMapping(value = "/registerUser", method = RequestMethod.POST, produces = "application/json")
 	public OoushResponseEntity registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
-		LOGGER.info("Resource /users/registerUser GET called");
-		LOGGER.debug("Resource /users/registerUser GET called");
+		LOGGER.info("Resource /users/registerUser POST called");
+		LOGGER.debug("Resource /users/registerUser POST called");
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(basicUserService.registerUser(registerUserRequest)).construct());
 	}
 
-	@RequestMapping(value = "/verifyUser/{verificationCode}", method = RequestMethod.POST)
+	@RequestMapping(value = "/verifyUser/{verificationCode}", method = RequestMethod.GET)
 	public OoushResponseEntity verifyUser(@PathVariable String verificationCode) {
 		LOGGER.info("Resource /users/verifyUser/ GET called");
 		LOGGER.debug("Resource /users/verifyUser/{} GET called", verificationCode);

@@ -23,8 +23,8 @@ public class AuthController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public OoushResponseEntity authenticateLogin(@RequestBody LoginRequest loginRequest) {
-		LOGGER.info("Resource /auth/authenticateLogin/ GET called");
-		LOGGER.debug("Resource /auth/authenticateLogin/ POST called for userName: {}", loginRequest.getUserName());
+		LOGGER.info("Resource /auth/login/ GET called");
+		LOGGER.debug("Resource /auth/login/ POST called for userName: {}", loginRequest.getUserName());
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(authenticationService.authenticateLogin(loginRequest)).construct());
 	}
 
