@@ -5,6 +5,7 @@ import com.ooush.api.dto.response.OoushResponseEntity;
 import com.ooush.api.entity.Users;
 import com.ooush.api.entity.enumerables.UserStatus;
 import com.ooush.api.repository.UserRespository;
+import com.ooush.api.service.appsettings.AppSettingsService;
 import com.ooush.api.service.email.RegisterUserEmailService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -15,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.UUID;
 
 import static com.ooush.api.constants.OoushConstants.VERIFICATION_CODE_EXPIRY_HOURS;
@@ -35,18 +38,22 @@ public class BasicUserService implements UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private AppSettingsService appSettingsService;
+
 	@Override
 	public Users findUserById(Integer id) {
 		return userRespository.findById(id).orElse(null);
 	}
 
 	@Override
-	public OoushResponseEntity verifyUser(String verificationCode) {
+	public void verifyUser(String verificationCode, HttpServletResponse response) throws IOException {
 
 		Users userToVerify = userRespository.findByVerificationCode(verificationCode);
+		String redirectUrl = appSettingsService.constructWebBaseUrl() + "/login";
 
 		if (new DateTime().isAfter(userToVerify.getCodeGenerationTime().plusHours(VERIFICATION_CODE_EXPIRY_HOURS))) {
-			return new OoushResponseEntity("Your verification email link has expired. Please click the link below to re-send your email", HttpStatus.BAD_REQUEST);
+			response.sendRedirect(redirectUrl);
 		}
 
 		userToVerify.setActive(true);
@@ -54,9 +61,9 @@ public class BasicUserService implements UserService {
 		userToVerify.setUserStatus(UserStatus.VERIFIED);
 		userToVerify.setCodeGenerationTime(null);
 
-		userRespository.save(userToVerify);
+		Users savedUser = userRespository.save(userToVerify);
 
-		return new OoushResponseEntity("Your account has been verified successfully. You will now be re-directed to the login page", HttpStatus.OK);
+		response.sendRedirect(redirectUrl + "?" + verificationCode);
 	}
 
 	@Override

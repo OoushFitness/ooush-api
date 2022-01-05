@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @RestController
 @RequestMapping(value = { "/users" })
 public class UserController {
@@ -30,10 +33,10 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/verifyUser/{verificationCode}", method = RequestMethod.GET)
-	public OoushResponseEntity verifyUser(@PathVariable String verificationCode) {
+	public void verifyUser(@PathVariable String verificationCode, HttpServletResponse response) throws IOException {
 		LOGGER.info("Resource /users/verifyUser/ GET called");
 		LOGGER.debug("Resource /users/verifyUser/{} GET called", verificationCode);
-		return new OoushResponseEntity(OoushResponseMap.createResponseMap(basicUserService.verifyUser(verificationCode)).construct());
+		basicUserService.verifyUser(verificationCode, response);
 	}
 
 	@RequestMapping(value = "/resendVerificationEmail/{verificationString}", method = RequestMethod.POST)
