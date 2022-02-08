@@ -2,11 +2,15 @@ package com.ooush.api.config;
 
 import com.ooush.api.service.appsettings.AppSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
@@ -25,6 +29,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
 	@Autowired
 	private AppSettingsService appSettingsService;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
+
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+
+	@Autowired
+	public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+		authenticationManagerBuilder.userDetailsService(this.userDetailsService).passwordEncoder(passwordEncoder());
+	}
+
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		// Configure an authentication event publisher
+		auth.authenticationEventPublisher(new DefaultAuthenticationEventPublisher(applicationEventPublisher)).userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+	}
 
 	@Override
 	protected void configure(HttpSecurity security) throws Exception {
@@ -50,6 +71,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 		source.registerCorsConfiguration("/**", restrictedOriginConfiguration);
 
 		return source;
+	}
+
+	@Bean
+	public AuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
+		AuthenticationTokenFilter authenticationTokenFilter = new AuthenticationTokenFilter();
+		authenticationTokenFilter.setAuthenticationManager(authenticationManagerBean());
+		return authenticationTokenFilter;
 	}
 
 	@Override
