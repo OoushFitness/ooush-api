@@ -1,4 +1,4 @@
-package com.ooush.api.dto.response.login;
+package com.ooush.api.dto.response;
 
 public class LoginResponse {
 

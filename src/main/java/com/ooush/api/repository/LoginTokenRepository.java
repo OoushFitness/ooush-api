@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LoginTokenRepository extends CrudRepository<LoginToken, Integer> {
 
+	LoginToken findByUsersId(Integer userId);
+
 }

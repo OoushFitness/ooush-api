@@ -3,15 +3,19 @@ package com.ooush.api.service.authentication;
 import com.ooush.api.constants.OoushConstants;
 import com.ooush.api.controller.AuthController;
 import com.ooush.api.dto.request.LoginRequest;
-import com.ooush.api.dto.response.login.LoginResponse;
+import com.ooush.api.dto.response.LoginResponse;
+import com.ooush.api.dto.response.LogoutResponse;
+import com.ooush.api.dto.response.VerifyResponse;
 import com.ooush.api.entity.LoginToken;
 import com.ooush.api.entity.Users;
 import com.ooush.api.repository.LoginTokenRepository;
 import com.ooush.api.repository.UserRespository;
+import com.ooush.api.service.users.UserService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +37,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Autowired
 	private LoginTokenRepository loginTokenRepository;
 
+	@Autowired
+	@Qualifier("BasicUserService")
+	private UserService userService;
+
 	@Override
 	public LoginResponse authenticateLogin(LoginRequest loginRequest) {
 
@@ -50,11 +58,43 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return loginResponse;
 	}
 
+	@Override
+	public LogoutResponse logout() {
+		return null;
+	}
+
+	@Override
+	public VerifyResponse verify() {
+		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
+		LoginToken loginToken = loginTokenRepository.findByUsersId(currentLoggedInUser.getUsersId());
+		VerifyResponse verifyResponse = new VerifyResponse();
+		if(loginToken != null) {
+			LOGGER.info("Verification Successful");
+
+			verifyResponse.setSuccess(OoushConstants.VERIFICATION_SUCCESS);
+			assignLoginOrVerifyResponseDetails(verifyResponse, currentLoggedInUser);
+		} else {
+			LOGGER.info("Verification Unsuccessful");
+			verifyResponse.setSuccess(OoushConstants.VERIFICATION_FAILURE);
+		}
+		return verifyResponse;
+	}
+
 	private void processAuthentication(LoginResponse loginResponse, Users userToAuthenticate, String password) {
 		if (passwordEncoder.matches(password, userToAuthenticate.getPasswordHash())) {
 			LOGGER.info("Login Successful");
-			assignLoginResponseDetails(loginResponse, userToAuthenticate);
+
+			loginResponse.setSuccess(OoushConstants.LOGIN_SUCCESS);
+			loginResponse.setLoginMessage(OoushConstants.LOGIN_MESSAGE_SUCCESS);
+
+			assignLoginOrVerifyResponseDetails(loginResponse, userToAuthenticate);
+
 			setLoginAttemptsToZero(userToAuthenticate.getUsersId());
+
+			String loginToken = UUID.randomUUID().toString();
+			loginResponse.setToken(loginToken);
+
+			saveLoginToken(loginToken, userToAuthenticate);
 		} else {
 			LOGGER.info("Login Failed: Password incorrect");
 			loginResponse.setSuccess(OoushConstants.LOGIN_FAILURE);
@@ -77,20 +117,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		userRespository.save(user);
 	}
 
-	private void assignLoginResponseDetails(LoginResponse loginResponse, Users user) {
-		loginResponse.setSuccess(OoushConstants.LOGIN_SUCCESS);
-		loginResponse.setLoginMessage(OoushConstants.LOGIN_MESSAGE_SUCCESS);
+	private void assignLoginOrVerifyResponseDetails(LoginResponse loginResponse, Users user) {
 		loginResponse.setUserId(user.getUsersId());
 		loginResponse.setEmail(user.getEmail());
 		loginResponse.setUserName(user.getUserName());
 		loginResponse.setFirstName(user.getFirstName());
 		loginResponse.setLastName(user.getLastName());
 		loginResponse.setLocation(user.getLocation());
-
-		String loginToken = UUID.randomUUID().toString();
-		loginResponse.setToken(loginToken);
-
-		saveLoginToken(loginToken, user);
 	}
 
 	private void saveLoginToken(String loginToken, Users user) {

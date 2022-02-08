@@ -23,9 +23,23 @@ public class AuthController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public OoushResponseEntity authenticateLogin(@RequestBody LoginRequest loginRequest) {
-		LOGGER.info("Resource /auth/login/ GET called");
+		LOGGER.info("Resource /auth/login/ POST called");
 		LOGGER.debug("Resource /auth/login/ POST called for userName: {}", loginRequest.getUserName());
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(authenticationService.authenticateLogin(loginRequest)).construct());
+	}
+
+	@RequestMapping(value = "/logout", method = RequestMethod.POST)
+	public OoushResponseEntity logout() {
+		LOGGER.info("Resource /auth/logout/ POST called");
+		LOGGER.debug("Resource /auth/logout/ POST called");
+		return new OoushResponseEntity(OoushResponseMap.createResponseMap(authenticationService.logout()).construct());
+	}
+
+	@RequestMapping(value = "/verify", method = RequestMethod.GET)
+	public OoushResponseEntity verify() {
+		LOGGER.info("Resource /auth/verify/ POST called");
+		LOGGER.debug("Resource /auth/verify/ POST called");
+		return new OoushResponseEntity(OoushResponseMap.createResponseMap(authenticationService.verify()).construct());
 	}
 
 }

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,6 +117,12 @@ public class BasicUserService implements UserService {
 						+ ", or alternatively use the form to re-send your verification email, using your email address", HttpStatus.BAD_REQUEST);
 			}
 		}
+	}
+
+	@Override
+	public Users getCurrentLoggedInUser() {
+		UserDetails userDetails = UserService.getLoggedInUserDetails();
+		return userDetails == null ? null : userRespository.findByUserName(userDetails.getUsername());
 	}
 
 	private OoushResponseEntity populateUserDetailsOnRegistrationRequest(RegisterUserRequest registerUserRequest, Users newUser) {
