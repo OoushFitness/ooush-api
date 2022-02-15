@@ -129,7 +129,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private void saveLoginToken(String loginToken, Users user) {
 		LoginToken userLoginToken = new LoginToken();
 		userLoginToken.setToken(loginToken);
-		userLoginToken.setUsersId(user.getUsersId());
+		userLoginToken.setUsers(user);
 		userLoginToken.setExpiry(new DateTime().plusHours(OoushConstants.LOGIN_TOKEN_EXPIRY_HOURS));
 
 		loginTokenRepository.save(userLoginToken);

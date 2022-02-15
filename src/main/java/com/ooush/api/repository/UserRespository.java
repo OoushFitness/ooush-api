@@ -19,6 +19,8 @@ public interface UserRespository extends CrudRepository<Users, Integer> {
 			+ "AND user.active = TRUE")
 	Users findByUserName(String userName);
 
+	Users findAllByUserName(String userName);
+
 	@Query("SELECT user "
 			+ "FROM Users user "
 			+ "WHERE user.email = ?1 "

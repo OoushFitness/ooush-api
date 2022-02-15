@@ -18,6 +18,8 @@ public interface UserService {
 
 	Users findUserById(Integer id);
 
+	Users findUserByUserName(String userName);
+
 	OoushResponseEntity registerUser(RegisterUserRequest registerUserRequest);
 
 	Users getCurrentLoggedInUser();

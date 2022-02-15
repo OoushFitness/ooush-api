@@ -12,6 +12,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -23,6 +24,10 @@ public class Users implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "UsersID", nullable = false)
 	private Integer usersId;
+
+	@OneToMany(mappedBy = "users")
+	@JsonIgnore
+	private List<LoginToken> loginTokens;
 
 	@NotEmpty
 	@Length(max = 128)
@@ -123,6 +128,14 @@ public class Users implements Serializable {
 
 	public void setUsersId(Integer usersId) {
 		this.usersId = usersId;
+	}
+
+	public List<LoginToken> getLoginTokens() {
+		return loginTokens;
+	}
+
+	public void setLoginTokens(List<LoginToken> loginToken) {
+		this.loginTokens = loginToken;
 	}
 
 	public String getEmail() {

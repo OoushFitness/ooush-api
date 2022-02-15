@@ -16,8 +16,9 @@ public class LoginToken implements Serializable {
 	@Column(name = "TokenID", nullable = false)
 	private Integer tokenId;
 
+	@ManyToOne(fetch = FetchType.EAGER)
 	@Column(name = "UsersID", nullable = true)
-	private Integer usersId;
+	private Users users;
 
 	@Column(name = "Token", nullable = true)
 	private String token;
@@ -37,12 +38,12 @@ public class LoginToken implements Serializable {
 		this.tokenId = tokenId;
 	}
 
-	public Integer getUsersId() {
-		return usersId;
+	public Users getUsers() {
+		return users;
 	}
 
-	public void setUsersId(Integer usersId) {
-		this.usersId = usersId;
+	public void setUsers(Users users) {
+		this.users = users;
 	}
 
 	public String getToken() {

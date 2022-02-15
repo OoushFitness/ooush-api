@@ -125,6 +125,11 @@ public class BasicUserService implements UserService {
 		return userDetails == null ? null : userRespository.findByUserName(userDetails.getUsername());
 	}
 
+	@Override
+	public Users findUserByUserName(String userName) {
+		return userRespository.findAllByUserName(userName);
+	}
+
 	private OoushResponseEntity populateUserDetailsOnRegistrationRequest(RegisterUserRequest registerUserRequest, Users newUser) {
 
 		String emailAddress = registerUserRequest.getEmail();
