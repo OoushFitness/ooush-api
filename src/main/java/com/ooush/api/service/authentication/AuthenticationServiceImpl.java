@@ -66,7 +66,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public VerifyResponse verify() {
 		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
-		LoginToken loginToken = loginTokenRepository.findByUsersId(currentLoggedInUser.getUsersId());
+		LoginToken loginToken = loginTokenRepository.findLoginTokenByUsers(currentLoggedInUser);
 		VerifyResponse verifyResponse = new VerifyResponse();
 		if(loginToken != null) {
 			LOGGER.info("Verification Successful");

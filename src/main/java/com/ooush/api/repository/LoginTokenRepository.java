@@ -1,6 +1,7 @@
 package com.ooush.api.repository;
 
 import com.ooush.api.entity.LoginToken;
+import com.ooush.api.entity.Users;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LoginTokenRepository extends CrudRepository<LoginToken, Integer> {
 
-	LoginToken findByUsersId(Integer userId);
+	LoginToken findLoginTokenByUsers (Users user);
 
 	LoginToken findByToken(String token);
 

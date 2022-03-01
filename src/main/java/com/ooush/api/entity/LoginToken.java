@@ -17,7 +17,7 @@ public class LoginToken implements Serializable {
 	private Integer tokenId;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@Column(name = "UsersID", nullable = true)
+	@JoinColumn(name = "UsersID", nullable = true)
 	private Users users;
 
 	@Column(name = "Token", nullable = true)
