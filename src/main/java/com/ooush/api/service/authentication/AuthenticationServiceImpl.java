@@ -10,22 +10,31 @@ import com.ooush.api.entity.LoginToken;
 import com.ooush.api.entity.Users;
 import com.ooush.api.repository.LoginTokenRepository;
 import com.ooush.api.repository.UserRespository;
+import com.ooush.api.security.TokenUtils;
 import com.ooush.api.service.users.UserService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 @Service("AuthenticationService")
 @Transactional
 public class AuthenticationServiceImpl implements AuthenticationService {
 
+	private static final String LOG_MESSAGE_TEMPLATE = "Login attempt, result : [{}], login type : [{}], username : [{}]";
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
 	@Autowired
@@ -38,8 +47,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private LoginTokenRepository loginTokenRepository;
 
 	@Autowired
+	private AuthenticationManager authenticationManager;
+
+	@Autowired
 	@Qualifier("BasicUserService")
 	private UserService userService;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
+
+	@Autowired
+	private TokenUtils tokenUtils;
 
 	@Override
 	public LoginResponse authenticateLogin(LoginRequest loginRequest) {
@@ -52,7 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			loginResponse.setSuccess(OoushConstants.LOGIN_FAILURE);
 			loginResponse.setLoginMessage(OoushConstants.LOGIN_MESSAGE_FAILURE_USERNAME_NOT_FOUND);
 		} else {
-			processAuthentication(loginResponse, userToAuthenticate, loginRequest.getPassword());
+			processAuthentication(loginResponse, userToAuthenticate, loginRequest);
 		}
 
 		return loginResponse;
@@ -80,8 +98,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return verifyResponse;
 	}
 
-	private void processAuthentication(LoginResponse loginResponse, Users userToAuthenticate, String password) {
-		if (passwordEncoder.matches(password, userToAuthenticate.getPasswordHash())) {
+	private void processAuthentication(LoginResponse loginResponse, Users userToAuthenticate, LoginRequest loginRequest) {
+		if (passwordEncoder.matches(loginRequest.getPassword(), userToAuthenticate.getPasswordHash())) {
 			LOGGER.info("Login Successful");
 
 			loginResponse.setSuccess(OoushConstants.LOGIN_SUCCESS);
@@ -91,10 +109,41 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 			setLoginAttemptsToZero(userToAuthenticate.getUsersId());
 
-			String loginToken = UUID.randomUUID().toString();
-			loginResponse.setToken(loginToken);
+			final Authentication authentication;
+			// Perform the authentication
+			try {
+				final TokenFactory tokenFactory = new UsernamePasswordTokenFactory();
 
-			saveLoginToken(loginToken, userToAuthenticate);
+				authentication = authenticationManager.authenticate(tokenFactory.getToken(loginRequest));
+			}
+			catch (DisabledException e) {
+				LOGGER.warn("Disabled user {} login denied", loginRequest.getUserName());
+				throw e;
+			}
+			catch (BadCredentialsException e) {
+				LOGGER.info(LOG_MESSAGE_TEMPLATE, false, loginRequest.getClass().getSimpleName(), loginRequest.getUserName());
+				LOGGER.debug("Error authenticating", e);
+				throw new BadCredentialsException("Incorrect login credentials");
+			}
+			catch (Exception e) {
+				LOGGER.error("Exception during doProcessAuthentication", e);
+				throw e;
+			}
+
+			// Reload password after authentication so we can generate a token
+			try {
+				userDetailsService.loadUserByUsername(loginRequest.getUserName());
+			}
+			catch (UsernameNotFoundException e) {
+				LOGGER.info(LOG_MESSAGE_TEMPLATE, false, loginRequest.getClass().getSimpleName(), loginRequest.getUserName());
+				throw new BadCredentialsException("Incorrect login credentials");
+			}
+
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+
+			// No need to confirm identity
+			final String token = tokenUtils.getUserToken(userToAuthenticate.getUserName());
+			loginResponse.setToken(token);
 		} else {
 			LOGGER.info("Login Failed: Password incorrect");
 			loginResponse.setSuccess(OoushConstants.LOGIN_FAILURE);
@@ -133,6 +182,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		userLoginToken.setExpiry(new DateTime().plusHours(OoushConstants.LOGIN_TOKEN_EXPIRY_HOURS));
 
 		loginTokenRepository.save(userLoginToken);
+	}
+
+	private interface TokenFactory<L extends LoginRequest> {
+		AbstractAuthenticationToken getToken(L loginRequest);
+	}
+
+	private static class UsernamePasswordTokenFactory implements TokenFactory<LoginRequest> {
+		@Override
+		public UsernamePasswordAuthenticationToken getToken(LoginRequest loginRequest) {
+			return new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword());
+		}
 	}
 
 }

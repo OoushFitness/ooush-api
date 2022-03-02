@@ -33,7 +33,6 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String authToken = httpRequest.getHeader("X-Auth-Token");
-		String authorization = httpRequest.getHeader("Authorization");
 		String username;
 		if (authToken != null) {
 			// get the type of the token and validate depending on this type

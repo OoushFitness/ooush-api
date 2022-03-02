@@ -190,4 +190,8 @@ public class BasicUserService implements UserService {
 		return null;
 	}
 
+	@Override
+	public Users findByUserName(String username) {
+		return userRespository.findByUserName(username);
+	}
 }

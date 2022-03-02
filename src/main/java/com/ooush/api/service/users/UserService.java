@@ -41,4 +41,5 @@ public interface UserService {
 		return null;
 	}
 
+	Users findByUserName(String username);
 }

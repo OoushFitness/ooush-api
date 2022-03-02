@@ -30,6 +30,12 @@ public class LoginToken implements Serializable {
 		// Empty constructor for Hibernate
 	}
 
+	public LoginToken(Users users, String token, DateTime expiry) {
+		this.users = users;
+		this.token = token;
+		this.expiry = expiry;
+	}
+
 	public Integer getTokenId() {
 		return tokenId;
 	}

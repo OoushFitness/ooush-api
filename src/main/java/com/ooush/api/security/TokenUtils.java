@@ -6,6 +6,7 @@ import com.ooush.api.repository.LoginTokenRepository;
 import com.ooush.api.service.users.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.slf4j.Logger;
@@ -15,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,6 +41,17 @@ public class TokenUtils {
 
 	private static final Map<String, Timer> sessionLogoutTimers = new ConcurrentHashMap<>();
 
+	public void save(LoginToken loginToken) {
+		userTokens.put(loginToken.getUsers().getUsersId(), loginToken);
+		LOGGER.debug("Persisting token for user {}", loginToken.getUsers().getUserName());
+		loginTokenRepository.save(loginToken);
+	}
+
+	public void delete(LoginToken loginToken) {
+		userTokens.remove(loginToken.getUsers().getUsersId());
+		loginTokenRepository.deleteById(loginToken.getTokenId());
+	}
+
 	/**
 	 * using a private claim name of 'type' to distinguish token types
 	 * @param token
@@ -55,6 +69,43 @@ public class TokenUtils {
 			}
 			return type;
 		}
+	}
+
+	public String getUserToken(String username) {
+		LoginToken token = null;
+		Users users = userService.findByUserName(username);
+		if (users != null && findByUser(users) != null) {
+			token = findByUser(users);
+			final DateTime tokenExpiry = token.getExpiry();
+			if (tokenExpiry.isBeforeNow()) {
+				LOGGER.debug("Token for user: {}, already created but has expired, deleting token...", username);
+				delete(token);
+				token = null;
+			}
+		}
+
+		if (token == null) {
+			LOGGER.debug("Creating new token for {}", username);
+			Map<String, Object> claims = new HashMap<>();
+			claims.put("sub", username);
+			claims.put("type", "user");
+
+			final Date expDate = this.generateExpirationDate();
+			token = new LoginToken(users, this.generateUserToken(claims, expDate), new DateTime(expDate));
+			save(token);
+		}
+		else {
+			LOGGER.debug("Returning existing token for {}", username);
+		}
+		return token.getToken();
+	}
+
+	private Date generateExpirationDate() {
+		return new Date(System.currentTimeMillis() + Integer.parseInt("604800") * 1000);
+	}
+
+	private String generateUserToken(Map<String, Object> claims, Date expDate) {
+		return Jwts.builder().setClaims(claims).setExpiration(expDate).signWith(SignatureAlgorithm.HS512, "Shhhhh!").compact();
 	}
 
 	private Claims getClaimsFromOoushToken(String token) {

@@ -2,9 +2,11 @@ package com.ooush.api.config;
 
 import com.ooush.api.service.appsettings.AppSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 	private AppSettingsService appSettingsService;
 
 	@Autowired
+	@Qualifier("UserDetailService")
 	private UserDetailsService userDetailsService;
 
 	@Autowired
@@ -78,6 +81,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 		AuthenticationTokenFilter authenticationTokenFilter = new AuthenticationTokenFilter();
 		authenticationTokenFilter.setAuthenticationManager(authenticationManagerBean());
 		return authenticationTokenFilter;
+	}
+
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
 	}
 
 	@Override
