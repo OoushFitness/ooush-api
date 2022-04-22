@@ -30,6 +30,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Service("AuthenticationService")
 @Transactional
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -76,8 +78,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public LogoutResponse logout() {
-		return null;
+	public LogoutResponse logout(HttpServletRequest httpServletRequest) {
+		String authToken = httpServletRequest.getHeader("X-Auth-Token");
+		tokenUtils.logout(authToken);
+		LogoutResponse logoutResponse = new LogoutResponse();
+		logoutResponse.setSuccess(true);
+		return logoutResponse;
 	}
 
 	@Override

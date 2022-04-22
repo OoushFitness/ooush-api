@@ -5,6 +5,7 @@ import com.ooush.api.dto.response.LoginResponse;
 import com.ooush.api.dto.response.OoushResponseEntity;
 import com.ooush.api.dto.response.OoushResponseMap;
 import com.ooush.api.dto.response.VerifyResponse;
+import com.ooush.api.security.TokenUtils;
 import com.ooush.api.service.authentication.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping(value = { "/auth" })
 public class AuthController {
@@ -23,6 +26,9 @@ public class AuthController {
 
 	@Autowired
 	private AuthenticationService authenticationService;
+
+	@Autowired
+	private TokenUtils tokenUtils;
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public OoushResponseEntity authenticateLogin(@RequestBody LoginRequest loginRequest) {
@@ -33,11 +39,11 @@ public class AuthController {
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(loginResponse).construct(), responseStatus);
 	}
 
-	@RequestMapping(value = "/logout", method = RequestMethod.POST)
-	public OoushResponseEntity logout() {
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public OoushResponseEntity logout(HttpServletRequest request) {
 		LOGGER.info("Resource /auth/logout/ POST called");
 		LOGGER.debug("Resource /auth/logout/ POST called");
-		return new OoushResponseEntity(OoushResponseMap.createResponseMap(authenticationService.logout()).construct());
+		return new OoushResponseEntity(OoushResponseMap.createResponseMap(authenticationService.logout(request)).construct());
 	}
 
 	@RequestMapping(value = "/verify", method = RequestMethod.GET)

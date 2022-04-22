@@ -23,8 +23,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
-
 @Transactional
 @Service
 public class TokenUtils {
@@ -238,4 +236,41 @@ public class TokenUtils {
 		}
 	}
 
+	public synchronized void logout(String token) {
+		LoginToken loginToken = findByToken(token);
+		if(loginToken == null) {
+			LOGGER.warn("Token was not found");
+		}
+		else {
+			LOGGER.debug("Expiring token");
+			removeTimeoutForUser(token);
+			expireToken(token);
+		}
+	}
+
+	public LoginToken findByToken(String tokenString) {
+		for(LoginToken token : userTokens.values()) {
+			if (token.getToken().equals(tokenString)) {
+				return token;
+			}
+		}
+		LoginToken token = loginTokenRepository.findByToken(tokenString);
+		if (token != null) {
+			LOGGER.debug("Found persisted token using token string");
+		}
+		return token;
+	}
+
+	public void expireToken(String token) {
+		String username = this.getUsernameFromToken(token);
+		LOGGER.debug("Expiring {}'s token", username);
+		LoginToken userToken = findByToken(token);
+		if (userToken != null) {
+			delete(userToken);
+		}
+		final Claims claims = this.getClaimsFromOoushToken(token);
+		if(claims != null) {
+			claims.setExpiration(new Date(System.currentTimeMillis() - (long) Integer.parseInt("24") * 1000 * 10000));
+		}
+	}
 }
