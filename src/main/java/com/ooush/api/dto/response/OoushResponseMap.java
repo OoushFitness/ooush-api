@@ -1,11 +1,11 @@
 package com.ooush.api.dto.response;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import org.springframework.http.HttpStatus;
+
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableMap;
-import org.springframework.http.HttpStatus;
 
 public class OoushResponseMap {
 
@@ -43,6 +43,6 @@ public class OoushResponseMap {
 	}
 
 	public static OoushResponseMap createResponseMap(final Object data) {
-		return new OoushResponseMap().addData(data).addStatusCode(HttpStatus.OK);
+		return new OoushResponseMap().addData(data);
 	}
 }

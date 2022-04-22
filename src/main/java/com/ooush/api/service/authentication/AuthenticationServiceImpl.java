@@ -72,7 +72,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		} else {
 			processAuthentication(loginResponse, userToAuthenticate, loginRequest);
 		}
-
 		return loginResponse;
 	}
 
@@ -88,7 +87,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		VerifyResponse verifyResponse = new VerifyResponse();
 		if(loginToken != null) {
 			LOGGER.info("Verification Successful");
-
 			verifyResponse.setSuccess(OoushConstants.VERIFICATION_SUCCESS);
 			assignLoginOrVerifyResponseDetails(verifyResponse, currentLoggedInUser);
 		} else {

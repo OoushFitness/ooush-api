@@ -4,7 +4,7 @@ public class OoushConstants {
 
 	// Authentication constants
 	public static final Integer VERIFICATION_CODE_EXPIRY_HOURS = 24;
-	public static final boolean VERIFICATION_SUCCESS = false;
+	public static final boolean VERIFICATION_SUCCESS = true;
 	public static final boolean VERIFICATION_FAILURE = false;
 
 	// Login constants
