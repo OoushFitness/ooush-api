@@ -94,6 +94,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		if(loginToken != null) {
 			LOGGER.info("Verification Successful");
 			verifyResponse.setSuccess(OoushConstants.VERIFICATION_SUCCESS);
+			verifyResponse.setToken(loginToken.getToken());
 			assignLoginOrVerifyResponseDetails(verifyResponse, currentLoggedInUser);
 		} else {
 			LOGGER.info("Verification Unsuccessful");
@@ -117,7 +118,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			// Perform the authentication
 			try {
 				final TokenFactory tokenFactory = new UsernamePasswordTokenFactory();
-
 				authentication = authenticationManager.authenticate(tokenFactory.getToken(loginRequest));
 			}
 			catch (DisabledException e) {
