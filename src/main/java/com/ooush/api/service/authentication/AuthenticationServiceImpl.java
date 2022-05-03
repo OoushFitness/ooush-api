@@ -108,6 +108,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			LOGGER.info("Login Successful");
 
 			loginResponse.setSuccess(OoushConstants.LOGIN_SUCCESS);
+			loginResponse.setAuthenticated(OoushConstants.LOGIN_SUCCESS);
 			loginResponse.setLoginMessage(OoushConstants.LOGIN_MESSAGE_SUCCESS);
 
 			assignLoginOrVerifyResponseDetails(loginResponse, userToAuthenticate);
@@ -177,6 +178,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		loginResponse.setFirstName(user.getFirstName());
 		loginResponse.setLastName(user.getLastName());
 		loginResponse.setLocation(user.getLocation());
+		loginResponse.setAuthenticated(OoushConstants.VERIFICATION_SUCCESS);
 	}
 
 	private void saveLoginToken(String loginToken, Users user) {

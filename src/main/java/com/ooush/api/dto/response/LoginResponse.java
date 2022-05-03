@@ -11,6 +11,11 @@ public class LoginResponse {
 	private String location;
 	private String token;
 	private String loginMessage;
+	private boolean authenticated;
+
+	public LoginResponse() {
+		this.authenticated = false;
+	}
 
 	public boolean isSuccess() {
 		return success;
@@ -82,5 +87,13 @@ public class LoginResponse {
 
 	public void setLoginMessage(String loginMessage) {
 		this.loginMessage = loginMessage;
+	}
+
+	public boolean isAuthenticated() {
+		return authenticated;
+	}
+
+	public void setAuthenticated(boolean authenticated) {
+		this.authenticated = authenticated;
 	}
 }
