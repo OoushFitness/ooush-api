@@ -30,6 +30,10 @@ public class UserExercise implements Serializable {
 	@JoinColumn(name = "ExerciseId", nullable = false)
 	private Exercise exercise;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "ExerciseDayId", nullable = false)
+	private ExerciseDay exerciseDay;
+
 	@Column(name = "Weight", nullable = false)
 	private Integer weight;
 
@@ -58,6 +62,14 @@ public class UserExercise implements Serializable {
 
 	public void setExercise(Exercise exercise) {
 		this.exercise = exercise;
+	}
+
+	public ExerciseDay getExerciseDay() {
+		return exerciseDay;
+	}
+
+	public void setExerciseDay(ExerciseDay exerciseDay) {
+		this.exerciseDay = exerciseDay;
 	}
 
 	public Integer getWeight() {

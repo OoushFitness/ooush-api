@@ -61,4 +61,5 @@ public class ExerciseDay implements Serializable {
 	public void setDayId(Integer dayId) {
 		this.dayId = dayId;
 	}
+
 }

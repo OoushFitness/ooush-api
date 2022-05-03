@@ -28,7 +28,6 @@ public class UserController {
 	@RequestMapping(value = "/registerUser", method = RequestMethod.POST, produces = "application/json")
 	public OoushResponseEntity registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
 		LOGGER.info("Resource /users/registerUser POST called");
-		LOGGER.debug("Resource /users/registerUser POST called");
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(basicUserService.registerUser(registerUserRequest)).construct());
 	}
 
