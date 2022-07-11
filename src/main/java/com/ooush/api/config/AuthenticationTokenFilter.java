@@ -35,8 +35,6 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 		String authToken = httpRequest.getHeader("X-Auth-Token");
 		String username;
 		if (authToken != null) {
-			// get the type of the token and validate depending on this type
-			String type = this.tokenUtils.getTypeFromToken(authToken);
 			// pull username out of token
 			username = this.tokenUtils.getUsernameFromToken(authToken);
 			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
