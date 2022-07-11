@@ -5,8 +5,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class AppConfig implements WebMvcConfigurer {
 	@Override
 	public void configurePathMatch(PathMatchConfigurer configurer) {
-		configurer.addPathPrefix("/api", (clazz) -> {
-			return clazz.getCanonicalName().startsWith("com.ooush.api.controller");
-		});
+		configurer.addPathPrefix("/api", (clazz) -> clazz.getCanonicalName().startsWith("com.ooush.api.controller"));
 	}
 }
