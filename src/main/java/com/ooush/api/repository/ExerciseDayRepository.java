@@ -13,5 +13,6 @@ import java.util.List;
 public interface ExerciseDayRepository extends CrudRepository<ExerciseDay, Integer> {
 
 	List<ExerciseDay> findAll();
+	ExerciseDay findByDayId(Integer dayId);
 
 }
