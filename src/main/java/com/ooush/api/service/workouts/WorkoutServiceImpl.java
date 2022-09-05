@@ -38,28 +38,30 @@ public class WorkoutServiceImpl implements WorkoutService {
 	@Override
 	public List<WorkoutDayResponse> getDashboardWorkouts() {
 
-		List<WorkoutDayResponse> workoutDays = new ArrayList<>();
+		List<WorkoutDayResponse> dashboardWorkoutWeek = new ArrayList<>();
 		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
-		List<ExerciseDay> exerciseDays = exerciseDayRepository.findAll();
+		List<UserWorkoutDay> userWorkoutDays = userWorkoutDayRepository.findAllByUser(currentLoggedInUser);
 
-		for (ExerciseDay exerciseDay : exerciseDays) {
+		for (UserWorkoutDay userWorkoutDay : userWorkoutDays) {
 			WorkoutDayResponse workoutDay = new WorkoutDayResponse();
-			populateWorkoutDayOfWeekDetails(workoutDay, exerciseDay);
-			workoutDay.setExercises(mapWorkoutDaysToUserExercises(currentLoggedInUser, exerciseDay));
-			workoutDays.add(workoutDay);
+			populateWorkoutDayOfWeekDetails(workoutDay, userWorkoutDay);
+			workoutDay.setExercises(mapWorkoutDaysToUserExercises(currentLoggedInUser, userWorkoutDay));
+			dashboardWorkoutWeek.add(workoutDay);
 		}
-		return workoutDays;
+		return dashboardWorkoutWeek;
 	}
 
-	private void populateWorkoutDayOfWeekDetails(WorkoutDayResponse workoutDay, ExerciseDay exerciseDay) {
+	private void populateWorkoutDayOfWeekDetails(WorkoutDayResponse workoutDay, UserWorkoutDay userWorkoutDay) {
+		ExerciseDay exerciseDay = userWorkoutDay.getExerciseDay();
+		workoutDay.setName(userWorkoutDay.getName());
 		workoutDay.setDay(exerciseDay.getName());
 		workoutDay.setDayId(exerciseDay.getDayId());
 		workoutDay.setWeekday(exerciseDay.isWeekday());
 	}
 
-	private List<ExerciseMapper> mapWorkoutDaysToUserExercises(Users currentLoggedInUser, ExerciseDay exerciseDay) {
+	private List<ExerciseMapper> mapWorkoutDaysToUserExercises(Users currentLoggedInUser, UserWorkoutDay userWorkoutDay) {
 		List<ExerciseMapper> exerciseList = new ArrayList<>();
-		List<UserExercise> userExercises = userExerciseRepository.findAllByUserAndExerciseDay(currentLoggedInUser, exerciseDay);
+		List<UserExercise> userExercises = userExerciseRepository.findAllByUserAndExerciseDay(currentLoggedInUser, userWorkoutDay.getExerciseDay());
 
 		for(UserExercise userExercise : userExercises) {
 			ExerciseMapper exercise = new ExerciseMapper();

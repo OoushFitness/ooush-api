@@ -9,6 +9,7 @@ public class WorkoutDayResponse {
 	private String day;
 	private Integer dayId;
 	private boolean weekday;
+	private String name;
 	private List<ExerciseMapper> exercises;
 
 	public String getDay() {
@@ -33,6 +34,14 @@ public class WorkoutDayResponse {
 
 	public void setWeekday(boolean weekday) {
 		this.weekday = weekday;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public List<ExerciseMapper> getExercises() {

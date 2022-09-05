@@ -1,5 +1,7 @@
 package com.ooush.api.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +13,7 @@ import com.ooush.api.entity.Users;
 public interface UserWorkoutDayRepository extends CrudRepository<UserWorkoutDay, Integer> {
 
     UserWorkoutDay findByUserAndExerciseDay(Users user, ExerciseDay exerciseDay);
+
+    List<UserWorkoutDay> findAllByUser(Users user);
 
 }

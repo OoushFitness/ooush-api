@@ -46,6 +46,9 @@ dependencies {
     // JSON Web Token
     implementation 'io.jsonwebtoken:jjwt:0.2'
 
+	// Apache Commons
+	implementation 'org.apache.commons:commons-collections4:4.0'
+
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

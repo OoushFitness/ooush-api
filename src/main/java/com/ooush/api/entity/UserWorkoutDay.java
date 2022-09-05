@@ -31,7 +31,7 @@ public class UserWorkoutDay implements Serializable {
     @JoinColumn(name = "ExerciseDayId", nullable = false)
     private ExerciseDay exerciseDay;
 
-    @Column(name = "Name", nullable = false)
+    @Column(name = "Name")
     private String name;
 
     public Integer getId() {
