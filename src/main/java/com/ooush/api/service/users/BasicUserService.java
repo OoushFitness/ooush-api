@@ -2,9 +2,13 @@ package com.ooush.api.service.users;
 
 import com.ooush.api.dto.request.RegisterUserRequest;
 import com.ooush.api.dto.response.OoushResponseEntity;
+import com.ooush.api.entity.ExerciseDay;
+import com.ooush.api.entity.UserWorkoutDay;
 import com.ooush.api.entity.Users;
 import com.ooush.api.entity.enumerables.UserStatus;
+import com.ooush.api.repository.ExerciseDayRepository;
 import com.ooush.api.repository.UserRespository;
+import com.ooush.api.repository.UserWorkoutDayRepository;
 import com.ooush.api.service.appsettings.AppSettingsService;
 import com.ooush.api.service.email.RegisterUserEmailService;
 import org.joda.time.DateTime;
@@ -19,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import static com.ooush.api.constants.OoushConstants.VERIFICATION_CODE_EXPIRY_HOURS;
@@ -42,6 +47,12 @@ public class BasicUserService implements UserService {
 	@Autowired
 	private AppSettingsService appSettingsService;
 
+	@Autowired
+	private ExerciseDayRepository exerciseDayRepository;
+
+	@Autowired
+	private UserWorkoutDayRepository userWorkoutDayRepository;
+
 	@Override
 	public Users findUserById(Integer id) {
 		return userRespository.findById(id).orElse(null);
@@ -55,16 +66,18 @@ public class BasicUserService implements UserService {
 
 		if (new DateTime().isAfter(userToVerify.getCodeGenerationTime().plusHours(VERIFICATION_CODE_EXPIRY_HOURS))) {
 			response.sendRedirect(redirectUrl);
+		} else {
+			userToVerify.setActive(true);
+			userToVerify.setEmailConfirmed(true);
+			userToVerify.setUserStatus(UserStatus.VERIFIED);
+			userToVerify.setCodeGenerationTime(null);
+			userToVerify.setIdentityVerificationTime(DateTime.now());
+
+			Users savedUser = userRespository.save(userToVerify);
+			addUserWorkoutWeek(savedUser);
+
+			response.sendRedirect(redirectUrl + "?" + verificationCode);
 		}
-
-		userToVerify.setActive(true);
-		userToVerify.setEmailConfirmed(true);
-		userToVerify.setUserStatus(UserStatus.VERIFIED);
-		userToVerify.setCodeGenerationTime(null);
-
-		Users savedUser = userRespository.save(userToVerify);
-
-		response.sendRedirect(redirectUrl + "?" + verificationCode);
 	}
 
 	@Override
@@ -165,7 +178,7 @@ public class BasicUserService implements UserService {
 		newUser.setEmail(emailAddress);
 		newUser.setEmailConfirmed(false);
 		newUser.setActive(false);
-		newUser.setPasswordHash(passwordEncoder.encode("testPassword123"));
+		newUser.setPasswordHash(passwordEncoder.encode(registerUserRequest.getPassword()));
 		newUser.setPhoneNumber(phoneNumber);
 		newUser.setPhoneNumberConfirmed(false);
 		newUser.setUserName(userName);
@@ -188,6 +201,18 @@ public class BasicUserService implements UserService {
 		}
 
 		return null;
+	}
+
+	private void addUserWorkoutWeek(Users userToVerify) {
+		List<ExerciseDay> exerciseWeek = exerciseDayRepository.findAll();
+
+		for (ExerciseDay exerciseDay : exerciseWeek) {
+			UserWorkoutDay userWorkoutDay = new UserWorkoutDay();
+			userWorkoutDay.setUser(userToVerify);
+			userWorkoutDay.setExerciseDay(exerciseDay);
+
+			userWorkoutDayRepository.save(userWorkoutDay);
+		}
 	}
 
 	@Override
