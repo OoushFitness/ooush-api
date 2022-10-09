@@ -15,4 +15,7 @@ public class OoushConstants {
 	public static final boolean LOGIN_SUCCESS = true;
 	public static final boolean LOGIN_FAILURE = false;
 
+	// Exercise constants
+	public static final Long CUSTOM_EXERCISE_BITMAP_INTEGER = Long.valueOf(512);
+
 }

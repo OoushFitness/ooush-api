@@ -14,5 +14,6 @@ import java.util.List;
 public interface ExerciseRepository extends JpaRepository<Exercise, Integer>, JpaSpecificationExecutor<Exercise> {
 
 	List<Exercise> findAll();
+	Exercise findUniqueById(Integer id);
 
 }

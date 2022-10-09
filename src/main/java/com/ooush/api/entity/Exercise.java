@@ -8,11 +8,17 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+import com.ooush.api.dto.request.UpdateUserExerciseRequest;
+
 @Entity
 @Table(name = "exercise")
 public class Exercise implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	public Exercise() {
+		// Empty constructor for hibernate
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

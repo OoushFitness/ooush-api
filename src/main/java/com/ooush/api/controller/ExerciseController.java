@@ -1,6 +1,7 @@
 package com.ooush.api.controller;
 
 import com.ooush.api.dto.request.ExerciseRequest;
+import com.ooush.api.dto.request.UpdateUserExerciseRequest;
 import com.ooush.api.dto.response.OoushResponseEntity;
 import com.ooush.api.dto.response.OoushResponseMap;
 import com.ooush.api.service.exercise.ExerciseServiceImpl;
@@ -25,6 +26,12 @@ public class ExerciseController {
 	public OoushResponseEntity fetchExercises(@RequestBody ExerciseRequest exerciseRequest) {
 		LOGGER.info("Resource /exercise/fetch/ POST called");
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(exerciseService.fetchExercises(exerciseRequest)).construct());
+	}
+
+	@PostMapping(value = "/update-user-exercise")
+	public OoushResponseEntity updateUserExercise(@RequestBody UpdateUserExerciseRequest updateUserExerciseRequest) {
+		LOGGER.info("Resource /exercise/update-user-exercise POST called");
+		return new OoushResponseEntity(OoushResponseMap.createResponseMap(exerciseService.updateUserExercise(updateUserExerciseRequest)).construct());
 	}
 
 }
