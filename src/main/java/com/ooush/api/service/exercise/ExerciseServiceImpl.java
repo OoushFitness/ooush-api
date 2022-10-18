@@ -78,6 +78,18 @@ public class ExerciseServiceImpl implements ExerciseService {
 		return userExerciseRepository.save(userExercise);
 	}
 
+	@Override
+	public void removeUserExercise(Integer exerciseId, Integer exerciseDayId) {
+		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
+		Exercise exercise = exerciseRepository.findUniqueById(exerciseId);
+		ExerciseDay exerciseDay = exerciseDayRepository.findByDayId(exerciseDayId);
+		UserExercise userExercise = userExerciseRepository.findByUserAndExerciseDayAndExercise(currentLoggedInUser, exerciseDay, exercise);
+		if (userExercise != null) {
+			userExerciseRepository.delete(userExercise);
+			exerciseRepository.delete(exercise);
+		}
+	}
+
 	private Exercise addCustomExercise(UpdateUserExerciseRequest updateUserExerciseRequest) {
 		Exercise customExercise = new Exercise();
 		customExercise.setName(updateUserExerciseRequest.getName());

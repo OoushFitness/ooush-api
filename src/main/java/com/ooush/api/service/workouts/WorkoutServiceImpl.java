@@ -65,6 +65,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 
 		for(UserExercise userExercise : userExercises) {
 			ExerciseMapper exercise = new ExerciseMapper();
+			exercise.setId(userExercise.getExercise().getId());
 			exercise.setName(userExercise.getExercise().getName());
 			exercise.setReps(userExercise.getReps());
 			exercise.setWeight(userExercise.getWeight());
