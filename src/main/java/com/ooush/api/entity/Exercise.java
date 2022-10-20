@@ -6,8 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import java.io.Serializable;
 
+import com.ooush.api.constants.OoushConstants;
 import com.ooush.api.dto.request.UpdateUserExerciseRequest;
 
 @Entity
@@ -53,5 +56,10 @@ public class Exercise implements Serializable {
 
 	public void setBitmap(Long bitmap) {
 		this.bitmap = bitmap;
+	}
+
+	@Transient
+	public boolean isCustomExercise() {
+		return bitmap >> (OoushConstants.BITMAP_POSITION_CUSTOM_EXERCISE - 1) > 0;
 	}
 }

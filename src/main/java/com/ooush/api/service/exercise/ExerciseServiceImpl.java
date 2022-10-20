@@ -86,7 +86,9 @@ public class ExerciseServiceImpl implements ExerciseService {
 		UserExercise userExercise = userExerciseRepository.findByUserAndExerciseDayAndExercise(currentLoggedInUser, exerciseDay, exercise);
 		if (userExercise != null) {
 			userExerciseRepository.delete(userExercise);
-			exerciseRepository.delete(exercise);
+			if (exercise.isCustomExercise()) {
+				exerciseRepository.delete(exercise);
+			}
 		}
 	}
 
