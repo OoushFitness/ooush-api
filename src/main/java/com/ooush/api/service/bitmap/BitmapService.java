@@ -1,11 +1,9 @@
 package com.ooush.api.service.bitmap;
 
-import java.util.List;
-
-import com.ooush.api.dto.response.BitmapSearchParameter;
+import com.ooush.api.dto.response.BitmapSearchParameterResponse;
 
 public interface BitmapService {
 
-    List<BitmapSearchParameter> fetchSearchOptions();
+    BitmapSearchParameterResponse fetchSearchOptions();
 
 }

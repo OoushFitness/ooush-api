@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.ooush.api.dto.response.BitmapSearchOption;
 import com.ooush.api.dto.response.BitmapSearchParameter;
+import com.ooush.api.dto.response.BitmapSearchParameterResponse;
 import com.ooush.api.entity.ExerciseBitmapPosition;
 import com.ooush.api.repository.ExerciseBitmapPositionRepository;
 
@@ -22,19 +23,23 @@ public class BitmapServiceImpl implements BitmapService {
     ExerciseBitmapPositionRepository exerciseBitmapPositionRepository;
 
     @Override
-    public List<BitmapSearchParameter> fetchSearchOptions() {
-        List<BitmapSearchParameter> bitmapSearchParameterResponse = new ArrayList<>();
+    public BitmapSearchParameterResponse fetchSearchOptions() {
+        BitmapSearchParameterResponse bitmapSearchParameterResponse = new BitmapSearchParameterResponse();
+        List<BitmapSearchParameter> bitmapSearchParameters = new ArrayList<>();
         List<ExerciseBitmapPosition> bitmapPositions = exerciseBitmapPositionRepository.findAll();
         List<String> uniqueSearchTypes = bitmapPositions.stream().map(ExerciseBitmapPosition::getType).distinct().collect(
                 Collectors.toList());
+        int bitmapPositionCount = 0;
+
         for (String searchType : uniqueSearchTypes) {
             BitmapSearchParameter bitmapSearchParameter = new BitmapSearchParameter();
             bitmapSearchParameter.setSearchParameter(searchType);
-            bitmapSearchParameterResponse.add(bitmapSearchParameter);
+            bitmapSearchParameters.add(bitmapSearchParameter);
         }
 
         for (ExerciseBitmapPosition bitmapPosition : bitmapPositions) {
-            for (BitmapSearchParameter bitmapSearchParameter : bitmapSearchParameterResponse) {
+            bitmapPositionCount++;
+            for (BitmapSearchParameter bitmapSearchParameter : bitmapSearchParameters) {
                 BitmapSearchOption bitmapSearchOption = new BitmapSearchOption();
                 if (bitmapPosition.getType().equals(bitmapSearchParameter.getSearchParameter())) {
                     bitmapSearchOption.setName(bitmapPosition.getName());
@@ -43,6 +48,8 @@ public class BitmapServiceImpl implements BitmapService {
                 }
             }
         }
+        bitmapSearchParameterResponse.setParameterList(bitmapSearchParameters);
+        bitmapSearchParameterResponse.setBitmapPositionCount(bitmapPositionCount);
         return bitmapSearchParameterResponse;
     }
 }
