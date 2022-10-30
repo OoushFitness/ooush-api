@@ -78,6 +78,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 		}
 		userExercise.setReps(updateUserExerciseRequest.getReps());
 		userExercise.setWeight(updateUserExerciseRequest.getWeight());
+		userExercise.setSets(updateUserExerciseRequest.getSets());
 		return userExerciseRepository.save(userExercise);
 	}
 
