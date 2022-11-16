@@ -6,6 +6,7 @@ public class ExerciseMapper {
 	private Integer id;
 	private Integer weight;
 	private Integer reps;
+	private Integer sets;
 
 	public String getName() {
 		return name;
@@ -37,5 +38,13 @@ public class ExerciseMapper {
 
 	public void setReps(Integer reps) {
 		this.reps = reps;
+	}
+
+	public Integer getSets() {
+		return sets;
+	}
+
+	public void setSets(Integer sets) {
+		this.sets = sets;
 	}
 }

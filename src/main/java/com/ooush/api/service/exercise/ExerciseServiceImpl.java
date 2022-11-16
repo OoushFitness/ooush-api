@@ -39,7 +39,10 @@ public class ExerciseServiceImpl implements ExerciseService {
 	@Override
 	public List<ExerciseResponse> fetchExercises(ExerciseRequest exerciseRequest) {
 		List<ExerciseResponse> exerciseResponseList = new ArrayList<>();
-		List<Exercise> exerciseList = exerciseRepository.findAll();
+		Integer searchBitmap = exerciseRequest.getSearchBitmap();
+		List<Exercise> exerciseList = searchBitmap != null
+				? exerciseRepository.findAll(searchBitmap)
+				: exerciseRepository.findAll();
 		for (Exercise exercise : exerciseList) {
 			ExerciseResponse exerciseResponse = new ExerciseResponse();
 			exerciseResponse.setId(exercise.getId());
@@ -75,6 +78,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 		}
 		userExercise.setReps(updateUserExerciseRequest.getReps());
 		userExercise.setWeight(updateUserExerciseRequest.getWeight());
+		userExercise.setSets(updateUserExerciseRequest.getSets());
 		return userExerciseRepository.save(userExercise);
 	}
 

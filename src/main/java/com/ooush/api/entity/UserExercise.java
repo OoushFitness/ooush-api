@@ -40,6 +40,9 @@ public class UserExercise implements Serializable {
 	@Column(name = "Reps", nullable = false)
 	private Integer reps;
 
+	@Column(name = "Sets", nullable = false)
+	private Integer sets;
+
 	public Integer getId() {
 		return id;
 	}
@@ -86,5 +89,13 @@ public class UserExercise implements Serializable {
 
 	public void setReps(Integer reps) {
 		this.reps = reps;
+	}
+
+	public Integer getSets() {
+		return sets;
+	}
+
+	public void setSets(Integer sets) {
+		this.sets = sets;
 	}
 }

@@ -69,6 +69,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 			exercise.setName(userExercise.getExercise().getName());
 			exercise.setReps(userExercise.getReps());
 			exercise.setWeight(userExercise.getWeight());
+			exercise.setSets(userExercise.getSets());
 
 			exerciseList.add(exercise);
 		}
