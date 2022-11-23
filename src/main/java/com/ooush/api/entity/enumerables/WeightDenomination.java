@@ -2,7 +2,7 @@ package com.ooush.api.entity.enumerables;
 
 public enum WeightDenomination {
     KG("kg"),
-    LB("lb");
+    LBS("lbs");
 
     private final String label;
 

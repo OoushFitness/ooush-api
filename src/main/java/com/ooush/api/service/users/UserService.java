@@ -1,7 +1,9 @@
 package com.ooush.api.service.users;
 
 import com.ooush.api.dto.request.RegisterUserRequest;
+import com.ooush.api.dto.request.UpdateUserSettingsRequest;
 import com.ooush.api.dto.response.OoushResponseEntity;
+import com.ooush.api.dto.response.UserSettingsResponse;
 import com.ooush.api.entity.Users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,4 +44,8 @@ public interface UserService {
 	}
 
 	Users findByUserName(String username);
+
+	UserSettingsResponse updateUserSettings(UpdateUserSettingsRequest updateUserSettingsRequest);
+
+	UserSettingsResponse getUserSettings();
 }

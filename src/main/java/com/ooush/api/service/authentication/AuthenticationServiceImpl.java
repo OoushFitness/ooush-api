@@ -7,9 +7,11 @@ import com.ooush.api.dto.response.LoginResponse;
 import com.ooush.api.dto.response.LogoutResponse;
 import com.ooush.api.dto.response.VerifyResponse;
 import com.ooush.api.entity.LoginToken;
+import com.ooush.api.entity.UserSetting;
 import com.ooush.api.entity.Users;
 import com.ooush.api.repository.LoginTokenRepository;
 import com.ooush.api.repository.UserRespository;
+import com.ooush.api.repository.UserSettingRepository;
 import com.ooush.api.security.TokenUtils;
 import com.ooush.api.service.users.UserService;
 import org.joda.time.DateTime;
@@ -60,6 +62,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Autowired
 	private TokenUtils tokenUtils;
+
+	@Autowired
+	private UserSettingRepository userSettingRepository;
 
 	@Override
 	public LoginResponse authenticateLogin(LoginRequest loginRequest) {
@@ -172,6 +177,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	private void assignLoginOrVerifyResponseDetails(LoginResponse loginResponse, Users user) {
+		UserSetting userSetting = userSettingRepository.findByUser(user);
+
+		loginResponse.setWeightDenomination(userSetting.getWeightDenomination().getLabel());
 		loginResponse.setUserId(user.getUsersId());
 		loginResponse.setEmail(user.getEmail());
 		loginResponse.setUserName(user.getUserName());
