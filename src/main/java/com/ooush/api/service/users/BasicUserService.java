@@ -1,16 +1,23 @@
 package com.ooush.api.service.users;
 
 import com.ooush.api.dto.request.RegisterUserRequest;
+import com.ooush.api.dto.request.UpdateUserSettingsRequest;
 import com.ooush.api.dto.response.OoushResponseEntity;
+import com.ooush.api.dto.response.UserSettingsResponse;
 import com.ooush.api.entity.ExerciseDay;
+import com.ooush.api.entity.UserSetting;
 import com.ooush.api.entity.UserWorkoutDay;
 import com.ooush.api.entity.Users;
 import com.ooush.api.entity.enumerables.UserStatus;
+import com.ooush.api.entity.enumerables.WeightDenomination;
 import com.ooush.api.repository.ExerciseDayRepository;
 import com.ooush.api.repository.UserRespository;
+import com.ooush.api.repository.UserSettingRepository;
 import com.ooush.api.repository.UserWorkoutDayRepository;
 import com.ooush.api.service.appsettings.AppSettingsService;
 import com.ooush.api.service.email.RegisterUserEmailService;
+
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +35,8 @@ import java.util.UUID;
 
 import static com.ooush.api.constants.OoushConstants.VERIFICATION_CODE_EXPIRY_HOURS;
 import static com.ooush.api.entity.enumerables.UserStatus.PRE_VERIFIED;
+
+import liquibase.util.StringUtil;
 
 @Service("BasicUserService")
 @Transactional
@@ -52,6 +61,9 @@ public class BasicUserService implements UserService {
 
 	@Autowired
 	private UserWorkoutDayRepository userWorkoutDayRepository;
+
+	@Autowired
+	private UserSettingRepository userSettingRepository;
 
 	@Override
 	public Users findUserById(Integer id) {
@@ -218,5 +230,22 @@ public class BasicUserService implements UserService {
 	@Override
 	public Users findByUserName(String username) {
 		return userRespository.findByUserName(username);
+	}
+
+	@Override
+	public UserSettingsResponse updateUserSettings(UpdateUserSettingsRequest updateUserSettingsRequest) {
+		Users currentLoggedInUser = getCurrentLoggedInUser();
+		UserSetting userSettings = userSettingRepository.findByUser(currentLoggedInUser);
+		if (StringUtils.isNotEmpty(updateUserSettingsRequest.getWeightDenomination()) && StringUtils.isNotBlank(updateUserSettingsRequest.getWeightDenomination())) {
+			userSettings.setWeightDenomination(WeightDenomination.valueOf(updateUserSettingsRequest.getWeightDenomination().toUpperCase()));
+		}
+		return new UserSettingsResponse(userSettingRepository.save(userSettings));
+	}
+
+	@Override
+	public UserSettingsResponse getUserSettings() {
+		Users currentLoggedInUser = getCurrentLoggedInUser();
+		UserSetting userSettings = userSettingRepository.findByUser(currentLoggedInUser);
+		return new UserSettingsResponse(userSettings);
 	}
 }

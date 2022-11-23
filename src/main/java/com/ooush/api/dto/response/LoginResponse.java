@@ -12,6 +12,7 @@ public class LoginResponse {
 	private String token;
 	private String loginMessage;
 	private boolean authenticated;
+	private String weightDenomination;
 
 	public LoginResponse() {
 		this.authenticated = false;
@@ -95,5 +96,13 @@ public class LoginResponse {
 
 	public void setAuthenticated(boolean authenticated) {
 		this.authenticated = authenticated;
+	}
+
+	public String getWeightDenomination() {
+		return weightDenomination;
+	}
+
+	public void setWeightDenomination(String weightDenomination) {
+		this.weightDenomination = weightDenomination;
 	}
 }

@@ -1,6 +1,7 @@
 package com.ooush.api.controller;
 
 import com.ooush.api.dto.request.RegisterUserRequest;
+import com.ooush.api.dto.request.UpdateUserSettingsRequest;
 import com.ooush.api.dto.response.OoushResponseEntity;
 import com.ooush.api.dto.response.OoushResponseMap;
 import com.ooush.api.service.users.BasicUserService;
@@ -40,9 +41,21 @@ public class UserController {
 
 	@RequestMapping(value = "/resendVerificationEmail/{verificationString}", method = RequestMethod.POST)
 	public OoushResponseEntity resendVerificationEmail(@PathVariable String verificationString) {
-		LOGGER.info("Resource /users/verifyUser/ GET called");
-		LOGGER.debug("Resource /users/resendVerificationEmail/{} GET called", verificationString);
+		LOGGER.info("Resource /users/resendVerificationEmail/ POST called");
+		LOGGER.debug("Resource /users/resendVerificationEmail/{} POST called", verificationString);
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(basicUserService.resendVerificationEmail(verificationString)).construct());
+	}
+
+	@RequestMapping(value = "/update-user-settings", method = RequestMethod.POST)
+	public OoushResponseEntity updateUserSettings(@RequestBody UpdateUserSettingsRequest updateUserSettingsRequest) {
+		LOGGER.info("Resource /users/update-user-settings POST called");
+		return new OoushResponseEntity(OoushResponseMap.createResponseMap(basicUserService.updateUserSettings(updateUserSettingsRequest)).construct());
+	}
+
+	@RequestMapping(value = "/get-user-settings", method = RequestMethod.GET)
+	public OoushResponseEntity getUserSettings() {
+		LOGGER.info("Resource /users/get-user-settings GET called");
+		return new OoushResponseEntity(OoushResponseMap.createResponseMap(basicUserService.getUserSettings()).construct());
 	}
 
 }
