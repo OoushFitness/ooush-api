@@ -15,7 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -53,7 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.httpBasic().disable();
 		httpSecurity.csrf().disable();
 
 		// Custom JWT based authentication
@@ -65,20 +66,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	CorsConfigurationSource corsConfigurationSource() {
-		final String webPortUrl = appSettingsService.constructWebBaseUrl();
-		final List<String> origins = new ArrayList<>();
-		origins.add(webPortUrl);
-
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		CorsConfiguration restrictedOriginConfiguration = new CorsConfiguration();
-		restrictedOriginConfiguration.setAllowedOrigins(origins);
-
-		source.registerCorsConfiguration("/**", restrictedOriginConfiguration);
-
-		return source;
-	}
+//	@Bean
+//	CorsConfigurationSource corsConfigurationSource() {
+//		final String webPortUrl = appSettingsService.constructWebBaseUrl();
+//		final List<String> origins = new ArrayList<>();
+//		origins.add(webPortUrl);
+//
+//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//		CorsConfiguration restrictedOriginConfiguration = new CorsConfiguration();
+//		restrictedOriginConfiguration.setAllowedOrigins(origins);
+//
+//		source.registerCorsConfiguration("/**", restrictedOriginConfiguration);
+//
+//		return source;
+//	}
 
 	@Bean
 	public AuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
@@ -95,6 +96,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedMethods("*");
+		registry.addMapping("/**")
+				.allowedOrigins("http://localhost:3000")
+				.allowedOrigins("http://localhost:3000/")
+				.allowedMethods("*");
 	}
 }
