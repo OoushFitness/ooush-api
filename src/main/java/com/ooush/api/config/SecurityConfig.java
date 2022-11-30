@@ -56,8 +56,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable();
 		httpSecurity.authorizeRequests()
-				.antMatchers("/workouts/get-dashboard-workouts").authenticated()
-				.anyRequest().permitAll();
+				.antMatchers("/auth/login").permitAll()
+				.anyRequest().authenticated()
+				.and()
+				.httpBasic();
 
 		// Custom JWT based authentication
 		httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
@@ -67,21 +69,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
-//	@Bean
-//	CorsConfigurationSource corsConfigurationSource() {
-//		final String webPortUrl = appSettingsService.constructWebBaseUrl();
-//		final List<String> origins = new ArrayList<>();
-//		origins.add(webPortUrl);
-//
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		CorsConfiguration restrictedOriginConfiguration = new CorsConfiguration();
-//		restrictedOriginConfiguration.setAllowedOrigins(origins);
-//
-//		source.registerCorsConfiguration("/**", restrictedOriginConfiguration);
-//
-//		return source;
-//	}
 
 	@Bean
 	public AuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
@@ -109,11 +96,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 		return super.authenticationManagerBean();
 	}
 
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**")
-				.allowedOrigins(appSettingsService.constructWebBaseUrl())
-				.allowedHeaders("*")
-				.allowedMethods("*");
-	}
 }
