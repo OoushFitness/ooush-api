@@ -59,7 +59,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 				.antMatchers("/auth/login").permitAll()
 				.anyRequest().authenticated()
 				.and()
-				.httpBasic();
+				.httpBasic()
+				.authenticationEntryPoint(new NoPopupBasicAuthenticationEntryPoint());
 
 		// Custom JWT based authentication
 		httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
