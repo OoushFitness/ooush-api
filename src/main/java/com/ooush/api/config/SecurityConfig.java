@@ -1,11 +1,15 @@
 package com.ooush.api.config;
 
+import java.util.Collections;
+
 import com.ooush.api.service.appsettings.AppSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,17 +19,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Configuration
@@ -56,6 +55,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable();
+		httpSecurity.authorizeRequests()
+				.antMatchers("/auth/login").permitAll()
+				.anyRequest().authenticated()
+				.and()
+				.httpBasic()
+				.authenticationEntryPoint(new NoPopupBasicAuthenticationEntryPoint());
 
 		// Custom JWT based authentication
 		httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
@@ -66,21 +71,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 		return new BCryptPasswordEncoder();
 	}
 
-//	@Bean
-//	CorsConfigurationSource corsConfigurationSource() {
-//		final String webPortUrl = appSettingsService.constructWebBaseUrl();
-//		final List<String> origins = new ArrayList<>();
-//		origins.add(webPortUrl);
-//
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		CorsConfiguration restrictedOriginConfiguration = new CorsConfiguration();
-//		restrictedOriginConfiguration.setAllowedOrigins(origins);
-//
-//		source.registerCorsConfiguration("/**", restrictedOriginConfiguration);
-//
-//		return source;
-//	}
-
 	@Bean
 	public AuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
 		AuthenticationTokenFilter authenticationTokenFilter = new AuthenticationTokenFilter();
@@ -89,16 +79,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 	}
 
 	@Bean
+	public FilterRegistrationBean<CorsFilter> simpleCorsFilter() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(Collections.singletonList(appSettingsService.constructWebBaseUrl()));
+		config.setAllowedMethods(Collections.singletonList("*"));
+		config.setAllowedHeaders(Collections.singletonList("*"));
+		source.registerCorsConfiguration("/**", config);
+		FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		return bean;
+	}
+
+	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
 
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**")
-				.allowedOrigins("http://localhost:3000")
-				.allowedOrigins("http://localhost:3000/")
-				.allowedMethods("*");
-	}
 }
