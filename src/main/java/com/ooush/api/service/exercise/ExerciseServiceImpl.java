@@ -14,7 +14,6 @@ import com.ooush.api.repository.UserExerciseRepository;
 import com.ooush.api.service.users.UserService;
 import com.ooush.api.specification.ExerciseSpecification;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +48,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 
 		for (Exercise exercise : exerciseList) {
 			ExerciseResponse exerciseResponse = new ExerciseResponse();
-			exerciseResponse.setId(exercise.getId());
+			exerciseResponse.setExerciseId(exercise.getId());
 			exerciseResponse.setName(exercise.getName());
 			exerciseResponseList.add(exerciseResponse);
 		}

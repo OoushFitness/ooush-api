@@ -7,7 +7,7 @@ import java.util.List;
 public class WorkoutDayResponse {
 
 	private String day;
-	private Integer dayId;
+	private Integer exerciseDayId;
 	private boolean weekday;
 	private String name;
 	private List<ExerciseMapper> exercises;
@@ -20,12 +20,12 @@ public class WorkoutDayResponse {
 		this.day = day;
 	}
 
-	public Integer getDayId() {
-		return dayId;
+	public Integer getExerciseDayId() {
+		return exerciseDayId;
 	}
 
-	public void setDayId(Integer dayId) {
-		this.dayId = dayId;
+	public void setExerciseDayId(Integer exerciseDayId) {
+		this.exerciseDayId = exerciseDayId;
 	}
 
 	public boolean isWeekday() {

@@ -30,7 +30,7 @@ public class ExerciseSpecification implements Specification<Exercise> {
         final List<Predicate> predicates = new ArrayList<>();
 
         if (filter.getSearchName() != null) {
-            predicates.add(cb.like(root.get("name"), "%" + filter.getSearchName() + "%"));
+            predicates.add(cb.like(root.get("name"), filter.getSearchName() + "%"));
         }
 
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));

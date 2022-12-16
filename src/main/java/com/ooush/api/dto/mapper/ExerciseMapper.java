@@ -3,7 +3,7 @@ package com.ooush.api.dto.mapper;
 public class ExerciseMapper {
 
 	private String name;
-	private Integer id;
+	private Integer exerciseId;
 	private Integer weight;
 	private Integer reps;
 	private Integer sets;
@@ -16,12 +16,12 @@ public class ExerciseMapper {
 		this.name = name;
 	}
 
-	public Integer getId() {
-		return id;
+	public Integer getExerciseId() {
+		return exerciseId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setExerciseId(Integer exerciseId) {
+		this.exerciseId = exerciseId;
 	}
 
 	public Integer getWeight() {

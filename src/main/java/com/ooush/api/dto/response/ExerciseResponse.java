@@ -2,15 +2,15 @@ package com.ooush.api.dto.response;
 
 public class ExerciseResponse {
 
-	private Integer id;
+	private Integer exerciseId;
 	private String name;
 
-	public Integer getId() {
-		return id;
+	public Integer getExerciseId() {
+		return exerciseId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setExerciseId(Integer exerciseId) {
+		this.exerciseId = exerciseId;
 	}
 
 	public String getName() {
