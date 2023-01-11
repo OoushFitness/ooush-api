@@ -1,6 +1,8 @@
 package com.ooush.api.repository;
 
 import com.ooush.api.entity.Exercise;
+import com.ooush.api.specification.ExerciseSpecification;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

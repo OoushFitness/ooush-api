@@ -12,6 +12,7 @@ import com.ooush.api.repository.ExerciseDayRepository;
 import com.ooush.api.repository.ExerciseRepository;
 import com.ooush.api.repository.UserExerciseRepository;
 import com.ooush.api.service.users.UserService;
+import com.ooush.api.specification.ExerciseSpecification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,12 +41,14 @@ public class ExerciseServiceImpl implements ExerciseService {
 	public List<ExerciseResponse> fetchExercises(ExerciseRequest exerciseRequest) {
 		List<ExerciseResponse> exerciseResponseList = new ArrayList<>();
 		Integer searchBitmap = exerciseRequest.getSearchBitmap();
+
 		List<Exercise> exerciseList = searchBitmap != null
 				? exerciseRepository.findAll(searchBitmap)
-				: exerciseRepository.findAll();
+				: exerciseRepository.findAll(new ExerciseSpecification(exerciseRequest));
+
 		for (Exercise exercise : exerciseList) {
 			ExerciseResponse exerciseResponse = new ExerciseResponse();
-			exerciseResponse.setId(exercise.getId());
+			exerciseResponse.setExerciseId(exercise.getId());
 			exerciseResponse.setName(exercise.getName());
 			exerciseResponseList.add(exerciseResponse);
 		}
@@ -102,4 +105,5 @@ public class ExerciseServiceImpl implements ExerciseService {
 		customExercise.setBitmap(OoushConstants.CUSTOM_EXERCISE_BITMAP_INTEGER);
 		return exerciseRepository.save(customExercise);
 	}
+
 }

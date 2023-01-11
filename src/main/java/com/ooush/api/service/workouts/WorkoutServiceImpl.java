@@ -55,7 +55,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 		ExerciseDay exerciseDay = userWorkoutDay.getExerciseDay();
 		workoutDay.setName(userWorkoutDay.getName());
 		workoutDay.setDay(exerciseDay.getName());
-		workoutDay.setDayId(exerciseDay.getDayId());
+		workoutDay.setExerciseDayId(exerciseDay.getDayId());
 		workoutDay.setWeekday(exerciseDay.isWeekday());
 	}
 
@@ -65,7 +65,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 
 		for(UserExercise userExercise : userExercises) {
 			ExerciseMapper exercise = new ExerciseMapper();
-			exercise.setId(userExercise.getExercise().getId());
+			exercise.setExerciseId(userExercise.getExercise().getId());
 			exercise.setName(userExercise.getExercise().getName());
 			exercise.setReps(userExercise.getReps());
 			exercise.setWeight(userExercise.getWeight());
