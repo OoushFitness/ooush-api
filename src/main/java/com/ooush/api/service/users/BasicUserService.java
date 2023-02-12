@@ -106,6 +106,11 @@ public class BasicUserService implements UserService {
 
 		Users savedUser = userRespository.save(newUser);
 
+		UserSetting userSetting = new UserSetting();
+		userSetting.setWeightDenomination(WeightDenomination.KG);
+		userSetting.setUser(savedUser);
+		userSettingRepository.save(userSetting);
+
 		registerUserEmailService.sendRegistrationEmail(savedUser);
 
 		return new OoushResponseEntity("A confirmation link has been sent to your email address. Please confirm your email to complete your user account registration", HttpStatus.OK);

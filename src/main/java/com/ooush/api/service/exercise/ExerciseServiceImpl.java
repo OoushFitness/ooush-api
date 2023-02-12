@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -41,12 +42,16 @@ public class ExerciseServiceImpl implements ExerciseService {
 	public List<ExerciseResponse> fetchExercises(ExerciseRequest exerciseRequest) {
 		List<ExerciseResponse> exerciseResponseList = new ArrayList<>();
 		Integer searchBitmap = exerciseRequest.getSearchBitmap();
+		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
 
 		List<Exercise> exerciseList = searchBitmap != null
 				? exerciseRepository.findAll(searchBitmap)
 				: exerciseRepository.findAll(new ExerciseSpecification(exerciseRequest));
 
-		for (Exercise exercise : exerciseList) {
+		List<Exercise> filteredExerciseList = exerciseList.stream().filter(exercise -> exercise.isCustomExercise()
+				&& exercise.getUser().equals(currentLoggedInUser) || !exercise.isCustomExercise()).collect(Collectors.toList());
+
+		for (Exercise exercise : filteredExerciseList) {
 			ExerciseResponse exerciseResponse = new ExerciseResponse();
 			exerciseResponse.setExerciseId(exercise.getId());
 			exerciseResponse.setName(exercise.getName());
@@ -62,7 +67,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
 		ExerciseDay exerciseDay = exerciseDayRepository.findByDayId(updateUserExerciseRequest.getExerciseDayId());
 		if (updateUserExerciseRequest.getExerciseId() == null) {
-			 exercise = addCustomExercise(updateUserExerciseRequest);
+			 exercise = addCustomExercise(updateUserExerciseRequest, currentLoggedInUser);
 		} else {
 			exercise = exerciseRepository.findUniqueById(updateUserExerciseRequest.getExerciseId());
 		}
@@ -99,10 +104,11 @@ public class ExerciseServiceImpl implements ExerciseService {
 		}
 	}
 
-	private Exercise addCustomExercise(UpdateUserExerciseRequest updateUserExerciseRequest) {
+	private Exercise addCustomExercise(UpdateUserExerciseRequest updateUserExerciseRequest, Users currentLoggedInUser) {
 		Exercise customExercise = new Exercise();
 		customExercise.setName(updateUserExerciseRequest.getName());
 		customExercise.setBitmap(OoushConstants.CUSTOM_EXERCISE_BITMAP_INTEGER);
+		customExercise.setUser(currentLoggedInUser);
 		return exerciseRepository.save(customExercise);
 	}
 
