@@ -31,9 +31,9 @@ import com.ooush.api.service.users.BasicUserService;
 
 class UserControllerTest {
 
-    private static String REGISTER_USER_SUCCESS_MESSAGE
+    private static final String REGISTER_USER_SUCCESS_MESSAGE
             = "A confirmation link has been sent to your email address. Please confirm your email to complete your user account registration";
-    private static String VERIFICATION_CODE = "660163a5-e141-4e86-9410-e27b2d0b41fe";
+    private static final String VERIFICATION_CODE = "660163a5-e141-4e86-9410-e27b2d0b41fe";
 
     @Mock
     BasicUserService mockBasicUserService;
