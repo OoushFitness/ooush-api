@@ -34,6 +34,12 @@ public class UserSetting implements Serializable {
     @Column(name = "WeightDenomination")
     private WeightDenomination weightDenomination;
 
+    public UserSetting() {}
+
+    public UserSetting(WeightDenomination weightDenomination) {
+        this.weightDenomination = weightDenomination;
+    }
+
     public Integer getId() {
         return id;
     }

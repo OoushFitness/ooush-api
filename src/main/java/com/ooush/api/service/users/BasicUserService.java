@@ -71,13 +71,14 @@ public class BasicUserService implements UserService {
 	}
 
 	@Override
-	public void verifyUser(String verificationCode, HttpServletResponse response) throws IOException {
+	public OoushResponseEntity verifyUser(String verificationCode, HttpServletResponse response) throws IOException {
 
 		Users userToVerify = userRespository.findByVerificationCode(verificationCode);
 		String redirectUrl = appSettingsService.constructWebBaseUrl() + "/login";
 
 		if (new DateTime().isAfter(userToVerify.getCodeGenerationTime().plusHours(VERIFICATION_CODE_EXPIRY_HOURS))) {
 			response.sendRedirect(redirectUrl);
+			new OoushResponseEntity(HttpStatus.BAD_REQUEST);
 		} else {
 			userToVerify.setActive(true);
 			userToVerify.setEmailConfirmed(true);
@@ -89,7 +90,9 @@ public class BasicUserService implements UserService {
 			addUserWorkoutWeek(savedUser);
 
 			response.sendRedirect(redirectUrl + "?" + verificationCode);
+			return new OoushResponseEntity(HttpStatus.OK);
 		}
+		return new OoushResponseEntity(HttpStatus.BAD_REQUEST);
 	}
 
 	@Override

@@ -33,10 +33,10 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/verifyUser/{verificationCode}", method = RequestMethod.GET)
-	public void verifyUser(@PathVariable String verificationCode, HttpServletResponse response) throws IOException {
+	public OoushResponseEntity verifyUser(@PathVariable String verificationCode, HttpServletResponse response) throws IOException {
 		LOGGER.info("Resource /users/verifyUser/ GET called");
 		LOGGER.debug("Resource /users/verifyUser/{} GET called", verificationCode);
-		basicUserService.verifyUser(verificationCode, response);
+		return basicUserService.verifyUser(verificationCode, response);
 	}
 
 	@RequestMapping(value = "/resendVerificationEmail/{verificationString}", method = RequestMethod.POST)
