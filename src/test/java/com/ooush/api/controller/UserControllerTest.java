@@ -2,7 +2,6 @@ package com.ooush.api.controller;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -21,7 +20,6 @@ import com.google.common.collect.ImmutableMap;
 import com.ooush.api.dto.request.RegisterUserRequest;
 import com.ooush.api.dto.request.UpdateUserSettingsRequest;
 import com.ooush.api.dto.response.OoushResponseEntity;
-import com.ooush.api.dto.response.OoushResponseMap;
 import com.ooush.api.dto.response.UserSettingsResponse;
 import com.ooush.api.entity.UserSetting;
 import com.ooush.api.entity.enumerables.WeightDenomination;
@@ -35,6 +33,7 @@ class UserControllerTest {
     private static final String REGISTER_USER_SUCCESS_MESSAGE
             = "A confirmation link has been sent to your email address. Please confirm your email to complete your user account registration";
     private static final String VERIFICATION_CODE = "660163a5-e141-4e86-9410-e27b2d0b41fe";
+    private static final String VERIFICATION_RESEND_VERIFICATION_MESSAGE = "A new confirmation link has been sent to your email address. Your old verification email will no longer be valid";
 
     @Mock
     BasicUserService mockBasicUserService;
@@ -100,5 +99,16 @@ class UserControllerTest {
         OoushResponseEntity response = target.updateUserSettings(new UpdateUserSettingsRequest());
         assertThat(response.getStatusCode(), Matchers.equalTo(HttpStatus.OK));
         assertThat(((ImmutableMap) response.getBody()).get("data"), Matchers.instanceOf(UserSettingsResponse.class));
+    }
+
+    @DisplayName("resendVerificationEmailShouldReturnMessageAndHttpStatus")
+    @Test
+    void resendVerificationEmailShouldReturnMessageAndHttpStatus() {
+        when(mockBasicUserService.resendVerificationEmail(any(String.class))).thenReturn(new OoushResponseEntity(VERIFICATION_RESEND_VERIFICATION_MESSAGE, HttpStatus.OK));
+
+        OoushResponseEntity response = target.resendVerificationEmail(VERIFICATION_CODE);
+        assertThat(response.getStatusCode(), Matchers.equalTo(HttpStatus.OK));
+        assertThat(((ImmutableMap) response.getBody()).get("data"), Matchers.instanceOf(OoushResponseEntity.class));
+        assertThat(((OoushResponseEntity) ((ImmutableMap) response.getBody()).get("data")).getBody(), Matchers.equalTo(VERIFICATION_RESEND_VERIFICATION_MESSAGE));
     }
 }
