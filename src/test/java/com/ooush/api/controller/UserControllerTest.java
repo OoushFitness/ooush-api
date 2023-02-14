@@ -19,6 +19,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.collect.ImmutableMap;
 import com.ooush.api.dto.request.RegisterUserRequest;
+import com.ooush.api.dto.request.UpdateUserSettingsRequest;
 import com.ooush.api.dto.response.OoushResponseEntity;
 import com.ooush.api.dto.response.OoushResponseMap;
 import com.ooush.api.dto.response.UserSettingsResponse;
@@ -89,5 +90,15 @@ class UserControllerTest {
 
         OoushResponseEntity response = target.verifyUser(VERIFICATION_CODE, mockHttpServletResponse);
         assertThat(response.getStatusCode(), Matchers.equalTo(HttpStatus.OK));
+    }
+
+    @DisplayName("updateUserSettingsShouldReturnUserSettings")
+    @Test
+    void updateUserSettingsShouldReturnUserSettings() {
+        when(mockBasicUserService.updateUserSettings(any(UpdateUserSettingsRequest.class))).thenReturn(new UserSettingsResponse(new UserSetting(WeightDenomination.KG)));
+
+        OoushResponseEntity response = target.updateUserSettings(new UpdateUserSettingsRequest());
+        assertThat(response.getStatusCode(), Matchers.equalTo(HttpStatus.OK));
+        assertThat(((ImmutableMap) response.getBody()).get("data"), Matchers.instanceOf(UserSettingsResponse.class));
     }
 }
