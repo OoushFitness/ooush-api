@@ -23,9 +23,6 @@ import com.ooush.api.dto.response.OoushResponseEntity;
 import com.ooush.api.dto.response.UserSettingsResponse;
 import com.ooush.api.entity.UserSetting;
 import com.ooush.api.entity.enumerables.WeightDenomination;
-import com.ooush.api.repository.UserRespository;
-import com.ooush.api.repository.UserSettingRepository;
-import com.ooush.api.service.email.RegisterUserEmailService;
 import com.ooush.api.service.users.BasicUserService;
 
 class UserControllerTest {
@@ -39,16 +36,7 @@ class UserControllerTest {
     BasicUserService mockBasicUserService;
 
     @Mock
-    UserSettingRepository mockUserSettingRepository;
-
-    @Mock
-    RegisterUserEmailService mockRegisterUserEmailService;
-
-    @Mock
     MockHttpServletResponse mockHttpServletResponse;
-
-    @Mock
-    UserRespository mockUserRepository;
 
     @InjectMocks
     private UserController target = new UserController();
