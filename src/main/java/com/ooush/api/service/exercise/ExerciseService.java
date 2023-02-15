@@ -12,6 +12,6 @@ public interface ExerciseService {
 	List<ExerciseResponse> fetchExercises(ExerciseRequest exerciseRequest);
 	UserExercise updateUserExercise(UpdateUserExerciseRequest updateUserExerciseRequest);
 
-	void removeUserExercise(Integer exerciseId, Integer exerciseDayId);
+	Boolean removeUserExercise(Integer exerciseId, Integer exerciseDayId);
 
 }

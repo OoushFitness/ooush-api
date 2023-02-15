@@ -41,8 +41,7 @@ public class ExerciseController {
 	public OoushResponseEntity removeUserExercise(@PathVariable Integer exerciseId, @PathVariable Integer exerciseDayId) {
 		LOGGER.info("Resource /exercise/remove-user-exercise/ DELETE called");
 		LOGGER.debug("Resource /exercise/remove-user-exercise/{}/{} DELETE called", exerciseId, exerciseDayId);
-		exerciseService.removeUserExercise(exerciseId, exerciseDayId);
-		return new OoushResponseEntity(OoushResponseMap.createSuccessResponseMap().construct());
+		return new OoushResponseEntity(OoushResponseMap.createResponseMap(exerciseService.removeUserExercise(exerciseId, exerciseDayId)).construct());
 	}
 
 }

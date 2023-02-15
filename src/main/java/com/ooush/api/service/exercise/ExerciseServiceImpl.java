@@ -91,7 +91,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 	}
 
 	@Override
-	public void removeUserExercise(Integer exerciseId, Integer exerciseDayId) {
+	public Boolean removeUserExercise(Integer exerciseId, Integer exerciseDayId) {
 		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
 		Exercise exercise = exerciseRepository.findUniqueById(exerciseId);
 		ExerciseDay exerciseDay = exerciseDayRepository.findByDayId(exerciseDayId);
@@ -101,7 +101,9 @@ public class ExerciseServiceImpl implements ExerciseService {
 			if (exercise.isCustomExercise()) {
 				exerciseRepository.delete(exercise);
 			}
+			return true;
 		}
+		return false;
 	}
 
 	private Exercise addCustomExercise(UpdateUserExerciseRequest updateUserExerciseRequest, Users currentLoggedInUser) {

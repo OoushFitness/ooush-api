@@ -22,7 +22,7 @@ import com.ooush.api.service.bitmap.BitmapServiceImpl;
 class BitmapControllerTest {
 
     @Mock
-    BitmapServiceImpl bitmapService;
+    BitmapServiceImpl mockBitmapService;
 
     @InjectMocks
     private BitmapController target = new BitmapController();
@@ -35,7 +35,7 @@ class BitmapControllerTest {
     @DisplayName("fetchSearchOptionsShouldReturnBitmapSearchParameterResponse")
     @Test
     void fetchSearchOptions() {
-        when(bitmapService.fetchSearchOptions()).thenReturn(new BitmapSearchParameterResponse());
+        when(mockBitmapService.fetchSearchOptions()).thenReturn(new BitmapSearchParameterResponse());
 
         OoushResponseEntity response = target.fetchSearchOptions();
         assertThat(response.getStatusCode(), Matchers.equalTo(HttpStatus.OK));
