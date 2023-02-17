@@ -26,7 +26,7 @@ public interface UserService {
 
 	Users getCurrentLoggedInUser();
 
-	void verifyUser(String verificationCode, HttpServletResponse response) throws IOException;
+	OoushResponseEntity verifyUser(String verificationCode, HttpServletResponse response) throws IOException;
 
 	OoushResponseEntity resendVerificationEmail(String verificationCode);
 

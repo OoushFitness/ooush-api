@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,7 +32,7 @@ public class AuthController {
 	@Autowired
 	private TokenUtils tokenUtils;
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@PostMapping(value = "/login")
 	public OoushResponseEntity authenticateLogin(@RequestBody LoginRequest loginRequest) {
 		LOGGER.info("Resource /auth/login/ POST called");
 		LOGGER.debug("Resource /auth/login/ POST called for userName: {}", loginRequest.getUserName());
@@ -39,14 +41,14 @@ public class AuthController {
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(loginResponse).construct(), responseStatus);
 	}
 
-	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	@GetMapping(value = "/logout")
 	public OoushResponseEntity logout(HttpServletRequest request) {
 		LOGGER.info("Resource /auth/logout/ POST called");
 		LOGGER.debug("Resource /auth/logout/ POST called");
 		return new OoushResponseEntity(OoushResponseMap.createResponseMap(authenticationService.logout(request)).construct());
 	}
 
-	@RequestMapping(value = "/verify", method = RequestMethod.GET)
+	@GetMapping(value = "/verify")
 	public OoushResponseEntity verify() {
 		LOGGER.info("Resource /auth/verify/ POST called");
 		LOGGER.debug("Resource /auth/verify/ POST called");
