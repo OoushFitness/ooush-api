@@ -269,7 +269,7 @@ public class TokenUtils {
 			delete(userToken);
 		}
 		final Claims claims = this.getClaimsFromOoushToken(token);
-		if(claims != null) {
+		if (claims != null) {
 			claims.setExpiration(new Date(System.currentTimeMillis() - (long) Integer.parseInt("24") * 1000 * 10000));
 		}
 	}
