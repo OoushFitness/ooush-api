@@ -11,7 +11,7 @@ import com.ooush.api.entity.Users;
  * @author Alex Green
  */
 @Repository
-public interface UserRespository extends CrudRepository<Users, Integer> {
+public interface UserRepository extends CrudRepository<Users, Integer> {
 
 	@Query("SELECT user "
 			+ "FROM Users user "

@@ -11,7 +11,7 @@ import com.ooush.api.entity.Users;
 import com.ooush.api.entity.enumerables.UserStatus;
 import com.ooush.api.entity.enumerables.WeightDenomination;
 import com.ooush.api.repository.ExerciseDayRepository;
-import com.ooush.api.repository.UserRespository;
+import com.ooush.api.repository.UserRepository;
 import com.ooush.api.repository.UserSettingRepository;
 import com.ooush.api.repository.UserWorkoutDayRepository;
 import com.ooush.api.service.appsettings.AppSettingsService;
@@ -36,8 +36,6 @@ import java.util.UUID;
 import static com.ooush.api.constants.OoushConstants.VERIFICATION_CODE_EXPIRY_HOURS;
 import static com.ooush.api.entity.enumerables.UserStatus.PRE_VERIFIED;
 
-import liquibase.util.StringUtil;
-
 @Service("BasicUserService")
 @Transactional
 public class BasicUserService implements UserService {
@@ -48,7 +46,7 @@ public class BasicUserService implements UserService {
 	private RegisterUserEmailService registerUserEmailService;
 
 	@Autowired
-	private UserRespository userRespository;
+	private UserRepository userRepository;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -67,13 +65,13 @@ public class BasicUserService implements UserService {
 
 	@Override
 	public Users findUserById(Integer id) {
-		return userRespository.findById(id).orElse(null);
+		return userRepository.findById(id).orElse(null);
 	}
 
 	@Override
 	public OoushResponseEntity verifyUser(String verificationCode, HttpServletResponse response) throws IOException {
 
-		Users userToVerify = userRespository.findByVerificationCode(verificationCode);
+		Users userToVerify = userRepository.findByVerificationCode(verificationCode);
 		String redirectUrl = appSettingsService.constructWebBaseUrl() + "/login";
 
 		if (new DateTime().isAfter(userToVerify.getCodeGenerationTime().plusHours(VERIFICATION_CODE_EXPIRY_HOURS))) {
@@ -86,7 +84,7 @@ public class BasicUserService implements UserService {
 			userToVerify.setCodeGenerationTime(null);
 			userToVerify.setIdentityVerificationTime(DateTime.now());
 
-			Users savedUser = userRespository.save(userToVerify);
+			Users savedUser = userRepository.save(userToVerify);
 			addUserWorkoutWeek(savedUser);
 
 			response.sendRedirect(redirectUrl + "?" + verificationCode);
@@ -107,7 +105,7 @@ public class BasicUserService implements UserService {
 		LOGGER.info("Service registerUser() from BasicUserService called");
 		LOGGER.debug("Service registerUser() from BasicUserService called for new user {}", newUser.getEmail());
 
-		Users savedUser = userRespository.save(newUser);
+		Users savedUser = userRepository.save(newUser);
 
 		UserSetting userSetting = new UserSetting();
 		userSetting.setWeightDenomination(WeightDenomination.KG);
@@ -125,9 +123,9 @@ public class BasicUserService implements UserService {
 		Users userToVerify;
 		boolean resendUsingEmail = verificationString.contains("@");
 		if (resendUsingEmail) {
-			userToVerify = userRespository.findPreverifiedByEmail(verificationString);
+			userToVerify = userRepository.findPreverifiedByEmail(verificationString);
 		} else {
-			userToVerify = userRespository.findByVerificationCode(verificationString);
+			userToVerify = userRepository.findByVerificationCode(verificationString);
 		}
 
 		if (userToVerify != null) {
@@ -136,7 +134,7 @@ public class BasicUserService implements UserService {
 			if (newVerificationCode != null) {
 				userToVerify.setCodeGenerationTime(new DateTime());
 				userToVerify.setVerificationCode(newVerificationCode);
-				userRespository.save(userToVerify);
+				userRepository.save(userToVerify);
 			}
 			registerUserEmailService.sendRegistrationEmail(userToVerify);
 			return new OoushResponseEntity("A new confirmation link has been sent to your email address. Your old verification email will no longer be valid", HttpStatus.OK);
@@ -155,12 +153,12 @@ public class BasicUserService implements UserService {
 	@Override
 	public Users getCurrentLoggedInUser() {
 		UserDetails userDetails = UserService.getLoggedInUserDetails();
-		return userDetails == null ? null : userRespository.findByUserName(userDetails.getUsername());
+		return userDetails == null ? null : userRepository.findByUserName(userDetails.getUsername());
 	}
 
 	@Override
 	public Users findUserByUserName(String userName) {
-		return userRespository.findAllByUserName(userName);
+		return userRepository.findAllByUserName(userName);
 	}
 
 	private OoushResponseEntity populateUserDetailsOnRegistrationRequest(RegisterUserRequest registerUserRequest, Users newUser) {
@@ -184,8 +182,8 @@ public class BasicUserService implements UserService {
 			return new OoushResponseEntity("Your registration request could not be processed. You must provide your last name", HttpStatus.BAD_REQUEST);
 		}
 
-		Users existingUserByUserName = userRespository.findByUserName(userName);
-		Users existingUserByEmail = userRespository.findByEmail(emailAddress);
+		Users existingUserByUserName = userRepository.findByUserName(userName);
+		Users existingUserByEmail = userRepository.findByEmail(emailAddress);
 
 		if (existingUserByUserName != null) {
 			return new OoushResponseEntity("Your registration request could not be processed. An account exists with this user name", HttpStatus.BAD_REQUEST);
@@ -237,7 +235,7 @@ public class BasicUserService implements UserService {
 
 	@Override
 	public Users findByUserName(String username) {
-		return userRespository.findByUserName(username);
+		return userRepository.findByUserName(username);
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package com.ooush.api.service.users;
 
 import com.ooush.api.entity.Users;
-import com.ooush.api.repository.UserRespository;
+import com.ooush.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +17,7 @@ import java.util.List;
 public class UserDetailService implements UserDetailsService {
 
 	@Autowired
-	private UserRespository userRepo;
+	private UserRepository userRepo;
 
 	@Override
 	public UserDetails loadUserByUsername(String userName) {
@@ -25,7 +25,6 @@ public class UserDetailService implements UserDetailsService {
 		if (user == null) {
 			throw new UsernameNotFoundException("Username " + userName + " not found");
 		}
-
 		return new UserDetailsImpl(user);
 	}
 
