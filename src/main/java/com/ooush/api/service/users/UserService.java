@@ -24,24 +24,9 @@ public interface UserService {
 
 	OoushResponseEntity registerUser(RegisterUserRequest registerUserRequest);
 
-	Users getCurrentLoggedInUser();
-
 	OoushResponseEntity verifyUser(String verificationCode, HttpServletResponse response) throws IOException;
 
 	OoushResponseEntity resendVerificationEmail(String verificationCode);
-
-	static UserDetails getLoggedInUserDetails() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.isAuthenticated()) {
-			try {
-				return (UserDetails) authentication.getPrincipal();
-			}
-			catch(ClassCastException e) {
-				LOGGER.error("Failed to cast authentication principal to UserDetails: {}", authentication.getPrincipal());
-			}
-		}
-		return null;
-	}
 
 	Users findByUserName(String username);
 

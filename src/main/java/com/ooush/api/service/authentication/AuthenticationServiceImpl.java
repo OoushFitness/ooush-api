@@ -13,6 +13,7 @@ import com.ooush.api.repository.LoginTokenRepository;
 import com.ooush.api.repository.UserRepository;
 import com.ooush.api.repository.UserSettingRepository;
 import com.ooush.api.security.TokenUtils;
+import com.ooush.api.service.users.LoggedInUserService;
 import com.ooush.api.service.users.UserService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -54,8 +55,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	@Qualifier("BasicUserService")
-	private UserService userService;
+	@Qualifier("LoggedInUserService")
+	private LoggedInUserService userService;
+
 
 	@Autowired
 	private UserDetailsService userDetailsService;

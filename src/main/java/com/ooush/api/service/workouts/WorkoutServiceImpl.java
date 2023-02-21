@@ -11,6 +11,8 @@ import com.ooush.api.repository.ExerciseDayRepository;
 import com.ooush.api.repository.UserExerciseRepository;
 import com.ooush.api.repository.UserWorkoutDayRepository;
 import com.ooush.api.service.users.BasicUserService;
+import com.ooush.api.service.users.LoggedInUserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +25,7 @@ import java.util.List;
 public class WorkoutServiceImpl implements WorkoutService {
 
 	@Autowired
-	private BasicUserService userService;
+	private LoggedInUserService loggedInUserService;
 
 	@Autowired
 	private ExerciseDayRepository exerciseDayRepository;
@@ -39,7 +41,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 	public List<WorkoutDayResponse> getDashboardWorkouts() {
 
 		List<WorkoutDayResponse> dashboardWorkoutWeek = new ArrayList<>();
-		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
+		Users currentLoggedInUser = loggedInUserService.getCurrentLoggedInUser();
 		List<UserWorkoutDay> userWorkoutDays = userWorkoutDayRepository.findAllByUser(currentLoggedInUser);
 
 		for (UserWorkoutDay userWorkoutDay : userWorkoutDays) {
@@ -78,7 +80,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 
 	@Override
 	public UserWorkoutDay setUserWorkoutDayTitle(SetUserWorkoutDayRequest setWorkoutDayTitleRequest) {
-		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
+		Users currentLoggedInUser = loggedInUserService.getCurrentLoggedInUser();
 		ExerciseDay exerciseDay = exerciseDayRepository.findByDayId(setWorkoutDayTitleRequest.getWorkoutDayId());
 		UserWorkoutDay userWorkoutDay =
 				userWorkoutDayRepository.findByUserAndExerciseDay(currentLoggedInUser, exerciseDay);

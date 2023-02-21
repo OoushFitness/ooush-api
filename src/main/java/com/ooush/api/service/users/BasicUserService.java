@@ -38,7 +38,7 @@ import static com.ooush.api.entity.enumerables.UserStatus.PRE_VERIFIED;
 
 @Service("BasicUserService")
 @Transactional
-public class BasicUserService implements UserService {
+public class BasicUserService extends AbstractUserService implements UserService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BasicUserService.class);
 
@@ -62,6 +62,9 @@ public class BasicUserService implements UserService {
 
 	@Autowired
 	private UserSettingRepository userSettingRepository;
+
+	@Autowired
+	private LoggedInUserService loggedInUserService;
 
 	@Override
 	public Users findUserById(Integer id) {
@@ -151,12 +154,6 @@ public class BasicUserService implements UserService {
 	}
 
 	@Override
-	public Users getCurrentLoggedInUser() {
-		UserDetails userDetails = UserService.getLoggedInUserDetails();
-		return userDetails == null ? null : userRepository.findByUserName(userDetails.getUsername());
-	}
-
-	@Override
 	public Users findUserByUserName(String userName) {
 		return userRepository.findAllByUserName(userName);
 	}
@@ -240,7 +237,7 @@ public class BasicUserService implements UserService {
 
 	@Override
 	public UserSettingsResponse updateUserSettings(UpdateUserSettingsRequest updateUserSettingsRequest) {
-		Users currentLoggedInUser = getCurrentLoggedInUser();
+		Users currentLoggedInUser = loggedInUserService.getCurrentLoggedInUser();
 		UserSetting userSettings = userSettingRepository.findByUser(currentLoggedInUser);
 		if (StringUtils.isNotEmpty(updateUserSettingsRequest.getWeightDenomination()) && StringUtils.isNotBlank(updateUserSettingsRequest.getWeightDenomination())) {
 			userSettings.setWeightDenomination(WeightDenomination.valueOf(updateUserSettingsRequest.getWeightDenomination().toUpperCase()));
@@ -250,7 +247,7 @@ public class BasicUserService implements UserService {
 
 	@Override
 	public UserSettingsResponse getUserSettings() {
-		Users currentLoggedInUser = getCurrentLoggedInUser();
+		Users currentLoggedInUser = loggedInUserService.getCurrentLoggedInUser();
 		UserSetting userSettings = userSettingRepository.findByUser(currentLoggedInUser);
 		return new UserSettingsResponse(userSettings);
 	}
