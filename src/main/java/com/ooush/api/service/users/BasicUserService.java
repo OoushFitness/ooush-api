@@ -79,7 +79,6 @@ public class BasicUserService extends AbstractUserService implements UserService
 
 		if (new DateTime().isAfter(userToVerify.getCodeGenerationTime().plusHours(VERIFICATION_CODE_EXPIRY_HOURS))) {
 			response.sendRedirect(redirectUrl);
-			new OoushResponseEntity(HttpStatus.BAD_REQUEST);
 		} else {
 			userToVerify.setActive(true);
 			userToVerify.setEmailConfirmed(true);
@@ -91,7 +90,7 @@ public class BasicUserService extends AbstractUserService implements UserService
 			addUserWorkoutWeek(savedUser);
 
 			response.sendRedirect(redirectUrl + "?" + verificationCode);
-			return new OoushResponseEntity(HttpStatus.OK);
+			return new OoushResponseEntity(savedUser, HttpStatus.OK);
 		}
 		return new OoushResponseEntity(HttpStatus.BAD_REQUEST);
 	}
@@ -151,11 +150,6 @@ public class BasicUserService extends AbstractUserService implements UserService
 						+ ", or alternatively use the form to re-send your verification email, using your email address", HttpStatus.BAD_REQUEST);
 			}
 		}
-	}
-
-	@Override
-	public Users findUserByUserName(String userName) {
-		return userRepository.findAllByUserName(userName);
 	}
 
 	private OoushResponseEntity populateUserDetailsOnRegistrationRequest(RegisterUserRequest registerUserRequest, Users newUser) {

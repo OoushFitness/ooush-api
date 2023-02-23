@@ -20,8 +20,6 @@ public interface UserService {
 
 	Users findUserById(Integer id);
 
-	Users findUserByUserName(String userName);
-
 	OoushResponseEntity registerUser(RegisterUserRequest registerUserRequest);
 
 	OoushResponseEntity verifyUser(String verificationCode, HttpServletResponse response) throws IOException;

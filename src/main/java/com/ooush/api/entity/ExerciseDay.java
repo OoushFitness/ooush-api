@@ -15,6 +15,17 @@ public class ExerciseDay implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	public ExerciseDay() {
+		// Empty constructor for hibernate
+	}
+
+	public ExerciseDay(Integer id, boolean weekday, String name, Integer dayId) {
+		this.id = id;
+		this.weekday = weekday;
+		this.name = name;
+		this.dayId = dayId;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "Id", nullable = false)
