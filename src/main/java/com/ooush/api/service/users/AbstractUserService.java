@@ -10,13 +10,12 @@ public abstract class AbstractUserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractUserService.class);
 
-    static UserDetails getLoggedInUserDetails() {
+    protected static UserDetails getLoggedInUserDetails() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             try {
                 return (UserDetails) authentication.getPrincipal();
-            }
-            catch(ClassCastException e) {
+            } catch (ClassCastException e) {
                 LOGGER.error("Failed to cast authentication principal to UserDetails: {}", authentication.getPrincipal());
             }
         }
