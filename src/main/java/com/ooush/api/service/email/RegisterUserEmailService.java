@@ -41,7 +41,7 @@ public class RegisterUserEmailService implements EmailService {
 		String verificationUrl = appSettingsService.constructAppBaseUrl() + "/users/verifyUser/" + user.getVerificationCode();
 
 		String subject = "Welcome to Ooush Fitness!";
-		String htmlMsg = "<b>Dear " + user.getFirstName() + " " + user.getLastName()+ "</b><br/>"
+		String htmlMsg = "<b>Dear " + user.getFirstName() + " " + user.getLastName() + "</b><br/>"
 				+ "<br/>Thank you for registering an account with Ooush Fitness.<br/>"
 				+ "<br/>To complete your registration please verify your email address!<br/>"
 				+ "<br/>Click the link below to verify:"
