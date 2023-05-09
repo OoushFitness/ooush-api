@@ -11,6 +11,7 @@ import com.ooush.api.entity.Users;
 import com.ooush.api.repository.ExerciseDayRepository;
 import com.ooush.api.repository.ExerciseRepository;
 import com.ooush.api.repository.UserExerciseRepository;
+import com.ooush.api.service.users.LoggedInUserService;
 import com.ooush.api.service.users.UserService;
 import com.ooush.api.specification.ExerciseSpecification;
 
@@ -36,13 +37,16 @@ public class ExerciseServiceImpl implements ExerciseService {
 	private UserService userService;
 
 	@Autowired
+	private LoggedInUserService loggedInUserService;
+
+	@Autowired
 	private ExerciseDayRepository exerciseDayRepository;
 
 	@Override
 	public List<ExerciseResponse> fetchExercises(ExerciseRequest exerciseRequest) {
 		List<ExerciseResponse> exerciseResponseList = new ArrayList<>();
 		Integer searchBitmap = exerciseRequest.getSearchBitmap();
-		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
+		Users currentLoggedInUser = loggedInUserService.getCurrentLoggedInUser();
 
 		List<Exercise> exerciseList = searchBitmap != null
 				? exerciseRepository.findAll(searchBitmap)
@@ -64,7 +68,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 	public UserExercise updateUserExercise(UpdateUserExerciseRequest updateUserExerciseRequest) {
 		// Add new custom user exercise if no exercise id present
 		Exercise exercise;
-		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
+		Users currentLoggedInUser = loggedInUserService.getCurrentLoggedInUser();
 		ExerciseDay exerciseDay = exerciseDayRepository.findByDayId(updateUserExerciseRequest.getExerciseDayId());
 		if (updateUserExerciseRequest.getExerciseId() == null) {
 			 exercise = addCustomExercise(updateUserExerciseRequest, currentLoggedInUser);
@@ -92,7 +96,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 
 	@Override
 	public Boolean removeUserExercise(Integer exerciseId, Integer exerciseDayId) {
-		Users currentLoggedInUser = userService.getCurrentLoggedInUser();
+		Users currentLoggedInUser = loggedInUserService.getCurrentLoggedInUser();
 		Exercise exercise = exerciseRepository.findUniqueById(exerciseId);
 		ExerciseDay exerciseDay = exerciseDayRepository.findByDayId(exerciseDayId);
 		UserExercise userExercise = userExerciseRepository.findByUserAndExerciseDayAndExercise(currentLoggedInUser, exerciseDay, exercise);

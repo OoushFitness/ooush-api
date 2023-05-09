@@ -1,5 +1,6 @@
 package com.ooush.api.service.appsettings;
 
+import com.ooush.api.entity.AppSettings;
 import com.ooush.api.repository.AppSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -36,9 +36,6 @@ class AuthControllerTest {
     AuthenticationService mockAuthenticationService;
 
     @Mock
-    TokenUtils mockTokenUtils;
-
-    @Mock
     MockHttpServletRequest mockHttpServletRequest;
 
     @InjectMocks

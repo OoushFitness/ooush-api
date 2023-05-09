@@ -132,7 +132,7 @@ public class TokenUtils {
 	}
 
 	public Boolean validateToken(String token, UserDetails userDetails) {
-		Users users = userService.findUserByUserName(userDetails.getUsername());
+		Users users = userService.findByUserName(userDetails.getUsername());
 		final LoginToken loginToken = findByUser(users);
 		if (!users.isActive()) {
 			LOGGER.debug("User {} is not active", users.getUsersId());

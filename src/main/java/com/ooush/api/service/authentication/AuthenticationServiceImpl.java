@@ -10,9 +10,10 @@ import com.ooush.api.entity.LoginToken;
 import com.ooush.api.entity.UserSetting;
 import com.ooush.api.entity.Users;
 import com.ooush.api.repository.LoginTokenRepository;
-import com.ooush.api.repository.UserRespository;
+import com.ooush.api.repository.UserRepository;
 import com.ooush.api.repository.UserSettingRepository;
 import com.ooush.api.security.TokenUtils;
+import com.ooush.api.service.users.LoggedInUserService;
 import com.ooush.api.service.users.UserService;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
 	@Autowired
-	private UserRespository userRespository;
+	private UserRepository userRepository;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -54,8 +55,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	@Qualifier("BasicUserService")
-	private UserService userService;
+	@Qualifier("LoggedInUserService")
+	private LoggedInUserService userService;
+
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -70,7 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public LoginResponse authenticateLogin(LoginRequest loginRequest) {
 
 		LoginResponse loginResponse = new LoginResponse();
-		Users userToAuthenticate = userRespository.findByUserName(loginRequest.getUserName());
+		Users userToAuthenticate = userRepository.findByUserName(loginRequest.getUserName());
 
 		if (userToAuthenticate == null) {
 			LOGGER.info("Login Failed: Username not found");
@@ -164,16 +166,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	private void setLoginAttemptsToZero(Integer userId) {
-		Users userToAdjust = userRespository.findById(userId).orElse(null);
+		Users userToAdjust = userRepository.findById(userId).orElse(null);
 		if (userToAdjust != null) {
 			userToAdjust.setLoginAttempts(0);
-			userRespository.save(userToAdjust);
+			userRepository.save(userToAdjust);
 		}
 	}
 
 	private void incrementLoginAttempts(Users user) {
 		user.setLoginAttempts(user.getLoginAttempts() + 1);
-		userRespository.save(user);
+		userRepository.save(user);
 	}
 
 	private void assignLoginOrVerifyResponseDetails(LoginResponse loginResponse, Users user) {
