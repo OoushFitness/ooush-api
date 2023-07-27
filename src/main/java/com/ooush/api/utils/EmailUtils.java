@@ -17,7 +17,7 @@ public class EmailUtils {
 									+ "<td style='padding:50px 0;font-size: 16px;'>"
 										+"<a "
 											+ "href='{Url}'"
-											+ "style='background:#0984AB;color:#FFFFFF;padding:20px;text-decoration:none;'"
+											+ "style='background:#FF5733;color:#003366;padding:20px;text-decoration:none;'"
 										+ ">"
 											+ "{ButtonMessage}"
 										+ "</a>"
