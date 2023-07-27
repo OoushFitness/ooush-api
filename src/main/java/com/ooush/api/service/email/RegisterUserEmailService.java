@@ -38,7 +38,10 @@ public class RegisterUserEmailService implements EmailService {
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
 		EmailTemplate emailTemplate = emailTemplateRepository.getByTemplateName(EmailTemplateName.GENERIC_HTML_TEMPLATE);
-		String verificationUrl = appSettingsService.constructAppBaseUrl() + "/users/verifyUser/" + user.getVerificationCode();
+//		Browser Testing: Use line 42 below
+//		String verificationUrl = appSettingsService.constructAppBaseUrl() + "/users/verifyUser/" + user.getVerificationCode();
+//		Mobile Testing: Use line 44 below and replace base url method with ngrkok url
+		String verificationUrl = "https://c78e-94-197-188-19.ngrok-free.app/users/verifyUser/" + user.getVerificationCode();
 
 		String subject = "Welcome to Ooush Fitness!";
 		String htmlMsg = "<b>Dear " + user.getFirstName() + " " + user.getLastName() + "</b><br/>"
